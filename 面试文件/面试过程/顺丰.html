@@ -1,0 +1,233 @@
+Pdf 顺丰面试总结(跨域)
+
+1、清除浮动
+	标准文档流：按照一定规则进行排列的，从上之下，从左到右，按照块级元素单独一行，行内元素可以多个一行的规则
+	float: right/left （none无浮动）
+	设置浮动的元素会脱离文档流，向左或者向右移动知道遇到另外一个浮动元素或者遇到边界
+	任何被声明了float的元素都会变成块级元素，可以设置宽高，内外边距
+       问题：（1）由于脱离文档流，所以父元素内无内容撑开，造成父元素塌陷
+	常规盒子遇到浮动盒子
+	1、常规盒子会无视浮动盒子（看不见浮动元素）
+	2、常规盒子计算高度无视浮动盒子
+	原理：
+
+	清除浮动
+       为了避免造成高度坍塌，因此，我们经常会在完成浮动布局之后进行清除浮动。
+
+      清除浮动的几个语法：
+
+（1）clear：none；不清除浮动；
+
+（2）clear：left；清除左浮动，元素在左浮动盒子的下方摆放；
+
+（3）clear：right；清除右浮动，元素在右浮动盒子的下方摆放；
+
+（4）clear：both；清除左右浮动，元素在左右浮动盒子的下方摆放
+
+	总结了一下，大致有如下几类:
+	1. 结尾空元素或者after等伪元素或者br 来clear
+	2. 父元素同样浮动
+	3. 父元素设置overflow为hidden或者auto 
+	4. 父元素display：table
+   问导致BFC的原因：
+	1、float不为none
+	2、position不为relative，static
+	3、display不为inline-block； display属性为下列之一:table-cell | table-caption| inline-block | flex | inline-flex
+	4、overfiow不为hidden
+	用于对块级元素排版。创建了 BFC的元素就是一个独立的盒子（HTML中的一个盒子, 看不见而已），里面的子元素不会在布局上影响外面的元素，同样，外面的元素，也不会影响其子元素。
+	特性：
+	1、BFC会阻止外边距叠加； 属于同一个BFC的两个相邻的块级元素会发生margin合并，不属于同一个BFC的两个相邻的块级元素不会发生margin合并
+	2、BFC通常可以包含浮动 (即计算BFC的高度时，浮动元素也参与计算)
+	3、
+
+  （1）在浮动元素后使用一个空元素如<div class="clear"></div>，并在CSS中赋予.clear{clear:both;}属性即可清理浮动。亦可使用<br class="clear" />或<hr class="clear" />来进行清理
+
+          优点：简单，代码少，浏览器兼容性好。
+
+          缺点：需要添加大量无语义的html元素，代码不够优雅，后期不容易维护
+
+（2）给浮动元素的容器添加overflow:hidden;或overflow:auto;可以清除浮动，另外在 IE6 中还需要触发 hasLayout ，例如为父元素设置容器宽高或设置 zoom:1。在添加overflow属性后，浮动元素又回到了容器层，把容器高度撑起，达到了清理浮动的效果。
+
+（3）结合 :after 伪元素（注意这不是伪类，而是伪元素，代表一个元素之后最近的元素）和 IEhack ，可以完美兼容当前主流的各大浏览器，这里的 IEhack 指的是触发 hasLayout。给浮动元素的容器添加一个clearfix的class，然后给这个class添加一个:after伪元素实现元素末尾添加一个看不见的块元素（Block element）清理浮动
+
+2、两行三列布局（前端一些常见的布局，比如：垂直/水平居中布局，左中右布局等；如何清除浮动；）
+
+3、header和content h5怎么处理
+
+3、选择器
+
+4、浏览器缓存
+
+5、闭包
+	闭包是指外部函数里声明内部函数，内部函数引用外部函数里的局部变量，这样当外部函数调用完毕以后，局部变量不被释放，可以一直使用。 
+	for(var i=0;i<5;i++){
+	  (function(i ) { setTimeout(() => {} )})(i)
+	}
+	console.log(i)
+	// 5->0,1,2,3,4
+	
+	for(var i=0;i<5;i++){
+ 	 (function( i) { setTimeout(() => {
+		console.log(i)
+	 }, 1000 * i )})(i)
+	}
+	console.log(i)
+	// 5-> 1-> 2-> 3-> 4
+	
+	let task = []
+	function output (j) {
+		return new Promise((resolve,reject) => {
+			setTimeout(() => {console.log(j)}, 1000 * j)
+			resolve()
+		} )
+	}
+	for(var i=0; i<5;i++){task.push(output(i))}
+	Promise.all(task).then(() => {setTimeout( () => {console.log(i)}, 1000)})
+6、跨域问题（追问，jsonp跨域的原理）
+	很简单，就是利用<script>标签没有跨域限制的“漏洞”（历史遗迹啊）来达到与第三方通讯的目的。当需要通讯时，本站脚本创建一个<script>元素，地址指向第三方的API网址，形如：
+<script src="http://www.example.net/api?param1=1¶m2=2"></script>并提供一个回调函数来接收数据（函数名可约定，或通过地址参数传递）。
+	：创建一个回调函数，然后在远程服务上调用这个函数并且将JSON 数据形式作为参数传递，完成回调。将JSON数据填充进回调函数
+	
+
+	cors方法：需要前后端同时支持
+		1、简单请求
+			head/get/post
+			http头部不超过： accept / accept-language / content-language / last-event-id  / content-type: application/x-www-form-urlencoded、multipart/form-data、text/plain
+	&&&&& 对于简单请求，浏览器直接发出CORS请求。具体来说，就是在头信息之中，增加一个Origin字段。Origin字段用来说明，本次请求来自哪个源（协议 + 域名 + 端口）。服务器根据这个值，决定是否同意这次请求
+			。Origin指定的域名在许可范围内，服务器返回的响应，会多出几个头信息字段
+			Access-Control-Allow-Origin
+			Access-Control-Allow-Credentials: 是否可以发送cookie
+			Access-Control-Expose-Headers   该字段可选。CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定。上面的例子指定，getResponseHeader('FooBar')可以返回FooBar字段的值.
+			CORS请求默认不发送Cookie和HTTP认证信息。如果要把Cookie发到服务器，一方面要服务器同意，指定Access-Control-Allow-Credentials字段。
+			开发者必须在AJAX请求中打开withCredentials属性。var xhr = new XMLHttpRequest();    xhr.withCredentials = true;
+		2、非简单请求
+			是那种对服务器有特殊要求的请求，比如请求方法是PUT或DELETE，或者Content-Type字段的类型是application/json
+	    非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为"预检"请求（preflight）.浏览器先询问服务器，当前网页所在的域名是否在服务器的许可名单之中，以及可以使用哪些HTTP动词和头信息字段。只有得到肯定答复，浏览器才会发出正式的XMLHttpRequest请求，否则就报错。
+
+7、递归会有什么问题，死循环（缺少准出的条件）
+
+8、for in存在什么问题
+	for..in..用来遍历对象上可枚举的属性，包括原型链上的属性
+	for_in要出现问题必须满足两个条件：
+   	1：IE < 9;
+   	2:某些不可枚举的属性被重写。
+	在js中当一些不可枚举的属性比如toString被重写后，它会变成可枚举。然而当你碰上了IE<9,这些被重写的属性依旧是不可枚举无法使用for_in去遍历。
+
+9、computed和watch的区别
+	1、在vue的 模板内（{{}}）是可以写一些简单的js表达式的 ，很便利。但是如果在页面中使用大量或是复杂的表达式去处理数据，对页面的维护会有很大的影响。这个时候就需要用到computed 计算属性来处理复杂的逻辑运算。    
+	1.优点： 在数据未发生变化时，优先读取缓存。computed 计算属性只有在相关的数据发生变化时才会改变要计算的属性，当相关数据没有变化是，它会读取缓存。而不必想 motheds方法 和 watch 方法是的每次都去执行函数。  
+	2.setter 和 getter方法：（注意在vue中书写时用set 和 get） setter 方法在设置值是触发。 getter 方法在获取值时触发。 2、 虽然计算属性在大多数情况下是非常适合的，但是在有些情况下我们需要自定义一个watcher，当需要在数据变化时执行异步或开销较大的操作时，这时watch是非常有用的。
+
+10、Vuex
+
+Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以一种可预测的方式发生变化。Vuex 也集成到 Vue 的官方调试工具 devtools extension，提供了诸如零配置的 time-travel 调试、状态快照导入导出等高级调试功能。
+11，箭头函数
+
+12，flex的具体参数
+
+13，定位
+	position:static（静态） | relative（相对） | absolute（绝对） | fixed（固定）
+—— static 无任何变化，元素显示在默认位置
+	relative 
+	absolute
+	fixed: 跟绝对定位基本相似，只有一个主要区别：绝对定位固定元素是相对于html根元素或其最近的定位祖先元素，而固定定位固定元素则是相对于浏览器视口本身。这意味着你可以创建固定的有用的网页效果，比如固定导航栏、回到顶部按钮，小广告等。
+  问z-index:
+	1、z-index应用于定位元素  z-index:auto(相当于0)
+	2、z-index取整数 ，值越大，层级越高
+	3、若元素设置了定位但是没有设置z-index，则按照标签结构，谁在后面谁层级高
+
+15,box-sizing:
+	border-box：边框和内边距的值是包含在width内的
+	content-box:默认值  边框和内边距的值是不包含在width内的
+
+16，typeof 
+	instanceof
+	typeof 的值有七种（string, number, function, boolean, function, object, undefined） 不能判断null，array
+	由于数组和对象都返回object，需要使用instanceof
+	
+	instanceof 是用来判断A是否为B的实例，表达式为：A instanceof B，如果A是B的实例，则返回true,否则返回false。
+	instanceof 运算符用来测试一个对象在其原型链中是否存在一个构造函数的 prototype 属性。
+	
+       [] instanceof Array; //true
+      {} instanceof Object;//true
+      new Date() instanceof Date;//true
+      new RegExp() instanceof RegExp//true
+      Instanceof弊端：
+	1、对于基础数据类型，字面量和实例创建方式不同
+		console.log(1 instanceof Number)//false
+	console.log(new Number(1) instanceof Number)//true
+	2、只有在当前实例的原型链上，我们检测出来的结构都为true, 在类的原型继承中，我们最后检测出来的结果未必准确。
+		var arr = [1, 2, 3];
+	  	console.log(arr instanceof Array) // true
+	console.log(arr instanceof Object);  // true
+	function fn(){}
+	console.log(fn instanceof Function)// true
+	console.log(fn instanceof Object)// true
+	3、不能检测null 和 undefined
+Object.prototype.toString.call() 最准确最常用的方式。首先获取Object原型上的toString方法，让方法执行，让toString方法中的this指向第一个参数的值。
+	Object上的toString它的作用是返回当前方法执行的主体（方法中的this）所属类的详细信息即"[object Object]",其中第一个object代表当前实例是对象数据类型的(这个是固定死的)，第二个Object代表的是this所属的类是Object。
+
+17、有关HTML/CSS的问题。
+
+    问：说一下display和position的取值。
+
+    答：display的取值有：table/inline/block/inline-block（当时就说了这些，还有经常用到的none，table-cell这些一紧张忘记说了）；
+	position的取值有：fixed/relative/absolute（static忘记说了）。
+
+    问：说一下absolute。
+
+    答：absolute是对元素的一个绝对定位，是相对于浏览器可视区域的一个定位，比如：position:absolute;top:o;这个CSS代码就会让元素显示在浏览器的最上方。position属性设置为absolute的元素会脱离文档流（又给自己挖坑了）。
+
+    问：什么是文档流？
+
+    答：
+
+18、
+git使用过程中，如果你在开发着业务，突然另一个分支有一个bug要改，你怎么办
+
+git stash       //将本次修改存到暂存区（紧急切换分支时）
+git stash pop   //将所有暂存区的内容取出来
+
+如果开发错误分支怎么办
+Git add .把所有更改暂存
+Git stash 把暂存的文件提交的git暂存栈
+Git checkout 切换到本该开发的分支
+Git stash pop 将暂存的代码放出
+
+
+算法：
+
+
+Vue:
+1,如果类似数组的没有被监听到怎么办
+
+
+
+1、一个 TCP 连接可以对应几个 HTTP 请求？(提示，这在问你HTTP1.0和1.1的区别) 
+
+
+	http1.0一个连接可以对应一个请求，在 HTTP/1.0 中，一个服务器在发送完一个 HTTP 响应后，会断开 TCP 链接。但是这样每次请求都会重新建立和断开 TCP 连接，代价过大。所以虽然标准中没有设定，某些服务器对 Connection: keep-alive 的 Header 进行了支持。意思是说，完成这个 HTTP 请求之后，不要断开 HTTP 请求使用的 TCP 连接。这样的好处是连接可以被重新使用，之后发送 HTTP 请求的时候不需要重新建立 TCP 连接，以及如果维持连接，那么 SSL 的开销也可以避免
+
+持久连接：既然维持 TCP 连接好处这么多，HTTP/1.1 就把 Connection 头写进标准，并且默认开启持久连接，除非请求中写明 Connection: close，那么浏览器和服务器之间是会维持一段时间的 TCP 连接，不会一个请求结束就断掉。
+
+如果维持连接，一个 TCP 连接是可以发送多个 HTTP 请求的
+
+2、一个 TCP 连接中 HTTP 请求发送可以一起发送么（比如一起发三个请求，再三个响应一起接收）？(提示，这就是在问你HTTP2.0和HTTP1.1协议的区别)
+
+HTTP/1.1 存在一个问题：单个 TCP 连接在同一时刻只能处理一个请求；一个支持持久连接的客户端可以在一个连接中发送多个请求（不需要等待任意请求的响应）。收到请求的服务器必须按照请求收到的顺序发送响应。
+
+推测一个原因：由于 HTTP/1.1 是个文本协议，同时返回的内容也并不能区分对应于哪个发送的请求，所以顺序必须维持一致。比如你向服务器发送了两个请求 GET /query?q=A 和 GET /query?q=B，服务器返回了两个结果，浏览器是没有办法根据响应结果来判断响应对应于哪一个请求的
+ 
+3、浏览器对同一Host建立TCP连接到数量有没有限制？(拜托，一个网站那么多图片，开一个TCP连接，按顺序下载？那不是等到死
+
+有。Chrome 最多允许对同一个 Host 建立六个 TCP 连接
+
+开一个 TCP 连接顺序下载，那样用户肯定等的很难受，但是如果每个图片都开一个 TCP 连接发 HTTP 请求，那电脑或者服务器都可能受不了，要是有 1000 张图片的话总不能开 1000 个TCP 连接吧
+
+如果图片都是 HTTPS 连接并且在同一个域名下，那么浏览器在 SSL 握手之后会和服务器商量能不能用 HTTP2，如果能的话就使用 Multiplexing 功能在这个连接上进行多路传输。不过也未必会所有挂在这个域名的资源都会使用一个 TCP 连接去获取，但是可以确定的是 Multiplexing 很可能会被用到。
+
+如果发现用不了 HTTP2 呢？或者用不了 HTTPS（现实中的 HTTP2 都是在 HTTPS 上实现的，所以也就是只能使用 HTTP/1.1）。那浏览器就会在一个 HOST 上建立多个 TCP 连接，连接数量的最大限制取决于浏览器设置，这些连接会在空闲的时候被浏览器用来发送新的请求，如果所有的连接都正在发送请求呢？那其他的请求就只能等等了
+
+
+
+

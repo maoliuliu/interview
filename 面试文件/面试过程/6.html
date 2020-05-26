@@ -1,0 +1,193 @@
+Pdf 面试
+
+节流防抖(实现/场景/源码，如lodash实现原理)
+
+节流：throttle，当持续触发某个事件，保证一段时间内只执行一次该事件
+
+场景：1、dom元素的拖拽mousemove 2、计算鼠标移动的距离
+
+时间戳:
+
+ function throttle(fn, delay){
+
+     Let prev = new Date()
+
+      Return  function() {
+
+Const _this = this
+
+Const now = new Date()
+
+Const args = agruments
+
+If (now - prev >= delay){
+
+   Fn.apply(_this, args)
+
+    Prev = new Date()
+
+}
+
+      }
+
+}
+
+定时器：
+
+Function throttle(fn, delay){
+
+     Let  timer = null
+
+      Return function() {
+
+Const _this = this
+
+Const args = agruments
+
+If(!timer) {
+
+setTimeout(() => {fn.apply(_this, args), timer = null}, delay)
+
+}
+
+}
+
+}
+
+
+
+防抖：当持续事件发生的时候，一定时间内没有触发，时间处理函数才会触发一次(防抖的原理是在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时)
+
+场景：1、 resize\scroll触发统计事件   2、文本输入验证，不用用户输入一次验证一次，随着用户的输入验证一次就可以了
+
+
+
+function debounce(fn, delay) {
+
+ Var timer = null
+
+Return () => {
+
+   If (timer) clearTimeout(timer)
+
+  Timer = setTimeout(fn, delay)
+
+}
+
+}
+
+// 处理函数
+function handle() {    
+    console.log(Math.random()); 
+}
+// 滚动事件
+window.addEventListener('scroll', debounce(handle, 1000));
+当持续触发scroll事件时，事件处理函数handle只在停止滚动1000毫秒之后才会调用一次，也就是说在持续触发scroll事件的过程中，事件处理函数handle一直没有执行。
+
+
+
+lodash的实现原理：
+
+节流
+
+Function throttle(func, time) {
+
+ If(typeof func !== ‘function’){
+
+  Throw new Error(’need function')
+
+ }
+
+time = + time || 0
+
+ Let lastTime = 0
+
+Return function(){
+
+   Const now = new Date()
+
+   If (now - lastTime >= time){
+
+      Func()
+
+     lastTime = now
+
+  }
+
+}
+
+}
+
+setInterval(throttle(() => {}, 1000), 100)
+
+防抖：
+
+Function debunce(func, wait){
+
+If(typeof func !== ‘function’) thow new Error(‘function is function’)
+
+wait =+wait || 0
+
+return function() {
+
+  let timer = null
+
+  Const agrus = agruments
+
+  Const _this = this
+
+   If(timer) clearTimeout(timer)
+
+  setTimeout(function(){ 
+
+     Func.apply(_this, argus)
+
+   }, wait)
+
+}
+
+
+
+}
+
+事件循环(浏览器/node/版本差异)
+
+
+
+setTimeout 实现原理
+
+
+
+react 和 vue 的区别
+
+
+
+Promise 原理
+
+
+
+前端错误监控及容灾
+
+
+
+性能优化
+
+谈谈 node 的内存泄漏
+
+开发过程中遇到的最大挑战是什么
+
+学习的动力怎么来的，如何维持
+
+浏览器的渲染机制是怎样的
+
+SSR 作用及优缺点
+
+如何进行状态管理
+
+webpack 及浏览器的技术分享目的是什么，分享了什么，怎么做的分享
+
+如何进行项目重构
+
+进程与线程的区别
+
+说说知道的设计模式

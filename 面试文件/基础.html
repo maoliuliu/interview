@@ -1,0 +1,315 @@
+基础面试问题
+1.	精通啥，有啥目标 
+2.	针对老项目改动，怎么处理，步骤
+3.	双向绑定    数据 - 状态变化  object.getDefinedPrototype   react setStatus  angular 脏检查
+4.	Npm2和npm3，从深度递归进行打平。
+5.	Mvc mvp mvvm模式区别
+1.	Mvp经典3层
+2.	MVP单向数据流，view不直接读取model层
+3.	mvvm，增加viewmode层
+6.	组件开发
+7.	常见的设计模式 
+1.	观察者模式\发布订阅模式  有什么区别？观察者，发布和订阅者在同一个层面，但是发布订阅模式，中间有个代理，是松散的。
+8.	Flex盒模型等其他布局方案
+9.	git内容
+1.	head、工作树、索引。head基于那个父分支开发，工作树是处理文件的实际内容、索引是暂存区域add进入。
+2.	rebase和merge
+3.	fetch和pull
+10.	性能优化
+11.	Https：安全套接字，客户端证书公钥加密+服务器私钥解密。加密算法，对称和非对称加密。信任问题，第三方证书公司。
+12.	http知识
+1.	1.0 短链接、不能复用、阻塞通道（可理解成单线程状况）
+2.	1.1 长链接（复用TCP通道，head：connection）、断点续传（Content-Range：bytes 0-999）、响应分块（transfer-encoding：chunked）
+3.	2.0 多路复用、二进制分帧（tcp自我调节慢启动问题）、首部压缩、服务端推送、https、
+13.	http缓存
+1.	1.0 expires  缓存到期时间
+2.	1.1 cache-control ：private、public、no-cache、max-age、no-store；Last-Modified/If-Modified-Since < Etag/If-None-Match
+3.	2.0 
+14.	冒泡捕获？事件委托？ 
+15.	event loop事件循环 
+16.	异步方案，promise？asyn？原理  
+17.	跨域方案  
+18.	Web安全方案
+1.	业务安全
+2.	技术安全
+1.	XSS跨站脚本攻击   防注入
+2.	CSRF跨域请求伪造   保证在原网站发起请求
+3.	sql注入
+4.	文件上传   
+19.	前端通信？XMLHttpRequest?fetch?sse?websocket?  
+1.	大文件上传：请求协议支持Blob、File.slice对象支持切割、hash验证。
+20.	介绍如何多人协作？
+21.	闭包？   函数体内部的变量都可以在保存在函数作用域内
+22.	Es6知识点
+23.	ES5的 defineProperty
+24.	px、rem、em区别
+25.	基础数据类型
+26.	原型链
+27.	apply、call、bind
+28.	箭头函数和普通函数
+29.	http协议
+1.	1xx：指示信息 - 请求已接收，正在处理
+2.	2xx：成功。
+3.	3xx：重定向。  304 缓存
+4.	4xx：客户端错误。404 找不到资源  403 不可用
+5.	5xx：服务器错误。
+30.	Utl-页面渲染
+31.	前后端分离
+32.	重绘和重排
+1.	重绘：重新绘制
+2.	重排：重新排版
+3.	transform 生成新的图层，独立层绘制，不影响原界面。
+33.	src-href  建立连接-提前引入
+
+
+基础薄弱  深入不了解。
+
+用户操作对缓存的影响：
+
+
+Http相关知识点
+
+OSI 7层模型：
+1.	应用层：网络服务和用户应用的接口，一般有http、ftp、https等协议
+2.	表示层：数据表示、安全和压缩。
+3.	会话层：会话的管理，建立，管理，终止等等。
+4.	传输层：数据传输的端口号、流控，一般有TCP、UDP协议
+5.	网络层：逻辑地址寻址，不同网络之前的路径选择。一般IP、ICMP
+6.	数据链路层：封装成帧、透明传输、差错控制。（点对点信道、广播信道）
+7.	物理层：一般代表对物理硬件的控制。
+
+
+1.TCP三次握手，4次放手机制
+
+握手机制
+客 ---> SYN=1,seq=x
+服 ---> SYN=1,ACK=1,seq=y,ack=x+1
+客 ---> ACK=1,seq=x+1,ack=y+1
+
+挥手机制
+客 —> Fin=1,seq=u
+服 —> ACK=1,seq=v,ack=u+1
+服 —> Fin=1,ACK=1,seq=w,ack=u+1
+客 —> ACK=1,seq=u+1,ack=w+1
+
+2.7层模型，5层模型
+
+7层网络模型
+应用层、表示层、会话层、传输层、网络层、数据链路层、物理层
+
+TCP/IP 5层模型
+应用层、传输层、网络层、数据链路层、物理层
+
+3.算法复杂度（时间复杂度和空间复杂度）
+
+时间复杂度执行特征以及公式：
+线性：	T(n) = O(n)
+对数型：	T(n) = O(log)
+常量型：	T(n) = O(1))
+多项型：	T(n) = O(n^2)
+
+4.MVC、MVP、MVVM
+MVC：model+view+control
+优点：职责分离，低耦合、高可用、快部署
+缺点：无明确定义界限、大型项目适用、复杂度、视图模型低效访问
+
+MVP：model+view+presenter
+优点：MV分离、测试驱动开发、隐藏数据
+缺点：通信频繁耦合P与V问题，视图永远是频繁的，so，P也要跟着变。
+
+MVVM：model+view+view-model
+优点：数据和视图双向绑定，vm驱动视图
+缺点：增长下的数据量，内存。复杂的调试，view问题 or view-model问题
+
+选择：没有绝对，根据实际项目去选择，架构本身是在演变的，而不是套用的，现成的模式仅做参考意义。
+
+5.队列和栈
+
+队列：先进先出。例子：木桶，没有底，先放进去就先从下面出来。
+堆栈：先进后出。例子：木桶，有个底，先放进去只能最后拿出来。
+
+6.addEventListener最后参数的意义。
+useCapture：是否使用捕获。默认false。
+事件冒泡：事件注册从底层一层一层的往上触发。
+事件捕获：事件注册从底层一层一层的往里触发。
+
+options：使用额外参数
+capture：是否使用冒泡。
+once：是否只调用一次事件。
+passive：是否阻止默认行为（preventDefault）
+
+7.px、em、rem
+px，像素，相对于屏幕的分辨率。
+em，相对值，父级的大小。
+rem，相对于html根元素大小，所有内容动态变化。
+
+UI设计标准尺寸：默认宽度640。
+宽度：320、屏幕对比比例：0.5、HTML font-size：10px、元素宽度：100px、元素宽度：10rem
+宽度：384、屏幕对比比例：0.6、HTML font-size：12px、元素宽度：120px、元素宽度：10rem
+宽度：480、屏幕对比比例：0.75、HTML font-size：15px、元素宽度：150px、元素宽度：10rem
+宽度：640、屏幕对比比例：1、HTML font-size：20px、元素宽度：200px、元素宽度：10rem
+
+rem保证在手机模式下样式统一，js计算的时候，以界面展示尺寸/设计稿尺寸=1rem
+
+浏览器默认：16px
+
+8.前端涉及到的安全问题
+技术安全：XSS跨站脚本攻击、CROS跨域伪造请求攻击、病毒文件上传、sql注入。
+业务安全：什么样的业务内容谁可以看到。
+
+9.重绘和重排以及transform
+重绘：元素重新绘制，比如颜色变化。
+重排：界面布局的变化，重新计算。
+
+transform：独立图层，合并绘制。
+
+
+10.src和href
+src为引用资源，直接加载到项目中
+href为引用方向，指向目标，触发的时候才触发行为
+
+10.观察者，发布-订阅区别
+观察者是知道观察谁，但是发布-订阅中间是一个消息代理，双方根本不关心对方是谁。
+
+11.简单请求和复杂请求
+简单请求条件：
+1.	head、post、get请求
+2.	head信息
+1.	accept
+2.	accept-language
+3.	content-language
+4.	last-event-id
+5.	content-type：text/pain、application/x-www-form-urlencode、multipart/form-data
+
+其他都是复杂请求，都需要发送options
+
+
+12.原型和原型链
+
+
+
+http://bigerfe.com/
+
+https://www.cnblogs.com/nanhuaqiushui/p/9949596.html
+
+
+https://es6.ruanyifeng.com/
+
+http://c.biancheng.net/design_pattern/
+https://www.cnblogs.com/chenqf/p/6386163.html
+https://segmentfault.com/a/1190000020072884#item-6
+https://www.cnblogs.com/GerryOfZhong/p/7649653.html
+
+Pdf 基础知识2（原型，原型链）：
+
+问：this的理解
+
+答：this只有在执行的时候才能确认指向。This是执行上下文（全局，函数，eval()）的一部分
+       箭头函数的this指向：箭头函数没有自己的this，看箭头函数的外层有没有函数，如果有 箭头函数的this指向外层函数的this，如果没有 则指向window
+
+问：同步和异步
+
+答：
+
+问：原型和原型链
+
+答：原型：是一个prototype的对象，即实例构造函数prototype的指向
+	原型链：是一个从实例的protype指向父类对象，直到最上层object对象为止；最上层是什么  Object.prototype.__proto__ === null
+
+问：继承，es6的继承
+答：1、
+ 	2、es6的继承使用class和extends关键字，还可以通过static关键字定义类的静态方法。（class只是一个语法糖，js的继承依然依靠原型链）
+		注意：class 实现继承的核心在于使用 extends 表明继承自哪个父类，并且在子类构造函数中必须调用 super，因为这段代码可以看成 Parent.call(this, value)。
+
+问：dom操作和bom操作
+答：常见的dom操作：
+	val dom = document.getElementById(‘idname’)
+         1、新增节点
+		var p1 = document.createElement(‘p’)
+		dom.appendChild(p1)
+	  2、移动节点
+		var div1 = document.querySelector(‘#div1’)
+		dom.appendChild(div1)
+ 	  3、获取父元素
+		var parent = dom.parentElement
+	  4、获取子元素
+		var child = dom.childNodes
+	  5、删除节点
+		var child = div1.childNodes
+		div1.removeChild(child[0])
+	Bom（浏览器对象模型）操作：
+	   window.screen  包含有关用户屏幕的信息
+	   window.location  用于获得当前页面的地址(URL)，并把浏览器重定向到新的页面
+		location.href/  location.search/  location.hash  / location.host / location. pathname / location.protocol
+	   window.history  浏览历史的前进后退等
+		history.go()  history.back()
+	   window.navigator 常常用来获取浏览器信息、是否移动端访问等等
+		navigator.userAgent
+
+问：ajax和跨域
+答：在不需要重新刷新的情况下，使用ajax异步请求数据，并在页面呈现出来。（目的:提高用户体验，减少网络数据的传输量）
+	var xhr = new XMLHttpRequest()
+	xhr.onReadystatechange = function() {
+		if(xhr.readyState === 4){
+			if(xhr.status === 200){
+			  alert(xhr.reponseText)
+			}
+		}
+	}
+	xhr.open (‘GET’, ‘/api’, false )
+	xhr.send(null)
+
+
+问：模块化
+答：
+
+
+
+问：flex弹性盒布局相关
+答：容器属性
+	主轴
+	flex-direction: row | row-reverse | column | column-reverse; 
+		row（默认值）：主轴为水平方向，起点在左端。
+		row-reverse：主轴为水平方向，起点在右端。 
+		column：主轴为垂直方向，起点在上沿。 
+		column-reverse：主轴为垂直方向，起点在下沿
+	换行
+	flex-warp: nowarp | warp | warp-reverse 
+	主轴对齐：
+	justify-content: fex-start | flex-end | center | space-between | space-around
+	交叉轴对齐：
+	align-item: flex-start | flex-end | center | baseline | stretch
+	多轴线对齐
+	align-content: flex-start | flex-end | center | space-between | space-around | stretch
+
+	项目的属性
+	
+	order: 排列顺序，数值越小越靠前，默认值是0
+	flex-grow: 放大比例
+	flex-shrink: 缩小比例
+	flex-basis: <length> | auto; 项目占据的空间,默认值为auto，即项目的本来大小
+	
+	简写：flex-grow, flex-shrink 和 flex-basic
+		flex: none |  [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]
+	
+问： css3
+	1、box-sizing: border-content（width = content + border + padding） | content-box（边框和padding不包含在元素的宽高之内）
+	2、
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

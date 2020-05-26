@@ -1,0 +1,144 @@
+实现new apply call bind reduce
+
+New:
+
+Function myNew(func){
+
+  // 先创建一个空对象
+
+   const obj ={}
+
+// 将继承 构造函数的原型链
+
+    obj = Object.create(func.prototype)
+
+// 将构造函数的this指向这个对象
+
+ let argus = Array.prototype.slice.call(arguments, 1)
+
+ let result = func.apply(obj, argus)
+
+return  typeof result === ‘object’ ? result : obj
+
+}
+
+Call
+
+Function.prototype.myCall(target, ... argus){
+
+   If (typeof this !== ‘function’) thow new Error(‘call的使用者是一个function’)
+
+   traget = traget || winow
+
+   traget.fn = this
+
+   let result = traget.fn(... argus)
+
+    return result
+
+}
+
+Apply
+
+Function.prototype.myApply(target){
+
+   If (typeof this !== ‘function’) thow new Error(‘call的使用者是一个function’)
+
+   If (! Array.isArray(arguments)) thow new Error(‘第二个参数需要是数组’)
+
+   traget = traget || winow
+
+   traget.fn = this
+
+   let result = traget.fn(argument[1])
+
+    return result
+
+}
+
+Bind
+
+Function.prototype.myBind(target){
+
+   If (typeof this !== ‘function’) thow new Error(‘call的使用者是一个function’)
+
+   let agrs = Array.prototype.slice.call(agruments, 1)
+
+   slef = this
+
+   // 构建一个干净的函数，用于保存原函数的原型
+
+    nop = function() {},
+
+    // 绑定的函数
+
+     bound = function() {
+
+  // this instanceof nop, 判断是否使用 new 来调用 bound 
+ // 如果是 new 来调用的话，this的指向就是其实例，
+ // 如果不是 new 调用的话，就改变 this 指向到指定的对象 o
+
+         return self.apply( this instanceof nop ? this : thisArg, 
+
+         args.concat(Array.prototype.slice.call(arguments)) );
+    }; 
+
+ // 箭头函数没有 prototype，箭头函数this永远指向它所在的作用域
+  if (this.prototype) { nop.prototype = this.prototype; }
+
+   // 修改绑定函数的原型指向
+
+ bound.prototype = new nop(); 
+
+  return bound;
+
+}
+
+
+
+Reduce: arr.reduce((res,cur, index, arr) => res+cur, 0)
+
+Array.prototype.myReduce(func, initValue) {
+   If(!Array.isArray(this)) throw new Error(’not arr’)
+   // 数组为空并没有初始值
+   If(this.lenght === 0 && aguments.lenght < 2) throw new Error(’not arr’)
+ Let arr = this
+  Let res =null
+If (aguments.lengh > 1) {
+   Res = initVaule
+} else {
+  res = arr.splice(0,1)[0]
+}
+Arr.forEach(item => {
+  res = func(res)
+})
+Return res
+}
+
+Curring 柯里化 把接受多个参数的函数转化接受一个参数的函数，该函数返回接受余下参数并且返回结果的新函数
+
+Sum(1, 2) //3
+Sum(1, 2)(3) //6
+
+Function sum() {
+  Let agusArr = Array.protptype.slice.call(arguments)
+  Let add = function () {
+    agusArr.push(... arguments)
+    return add
+   }
+Add.toString = function () {
+   return allArgs.reduce((a, b) => a+b)
+}
+reurn add
+}
+
+
+
+数组交集，编写一个函数，输入两个数组，输出它们的交集。输出数组中不含重复的元素，元素排列顺序可随意。
+
+二叉树的搜索，输入一个普通二叉树的根节点，实现一个调度器，调用调度器的next()方法，将返回二叉树中下一个最小的数；调用迭代器的hasNext()方法，将返回是否存在下一个数。二叉树节点是整数，无序。
+
+三角形个数，输入一个非负整数的数组，如果将数组元素选作三角形的边长，编写一个函数，输出这个数组可构成的三角形数量。
+
+数组切分问题，输入一个正序排列的整型数组，如果它可以被切分为1个或多个子序列，输出True，反之False。子序列需为连续的整型数组，并且长度至少为3。
+

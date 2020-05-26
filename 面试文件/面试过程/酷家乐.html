@@ -1,0 +1,609 @@
+酷家乐面试*（盒模型+ css动画 + 垂直居中）
+
+1.什么时候接触前端 
+
+  你好，我是毛柳柳，在2018年7月份毕业之后在饿了么工作了，在公司一直负责的 是与B端相关的业务，负责过两个方向的业务（商品和开店）。我是在大三的时候接触到前端，自己学习之后再大四有去哪儿网和百度外卖的实习经历。
+
+
+2.介绍一下盒模型 
+
+    页面展示一个元素需要一个空间，这个空间就是盒模型，盒模型包括（内容区域 + 内边距padding + 边框border + 外边距margin)
+    标准盒模型：width指content部分的宽度
+    怪异盒模型：width指content部分的宽度
+     box-sizing的使用： content-box | border-box
+     
+     border:   boder-width | border-style（none | soild | double | dashed | dotted） | border-color
+	
+     border-radius: 左上角 右上角 右下角 左下角;
+ 
+    table{  border-collapse:collapse; 表示边框合并在一起。
+	 }
+
+3.position相关属性 
+
+	static 位置不变，默认值
+	relative  相对定位 相对于原来位置  定位后空间不释放
+	absolute 绝对定位  相对于最近已定位的祖先元素（脱离文档流）
+	fixed 固定定位 相对于浏览器位置，以浏览器最左上方的点进行偏移的
+
+	BFC:
+	1、float不为none
+	2、diplay的值为inline-block table-cell table-caption
+	3、visbile不为hidden
+	4、position值为 fixed absolute
+
+4.css动画如何实现 
+
+
+Transition：过渡形成动画，就是元素从一种样式变为另外一种样式
+过渡动画的两个必须点1、指定要添加的过渡效果的css属性2、过渡效果持续的时间
+transition: all .2s ease;
+
+eg:鼠标移动是的动画
+Hover {
+	background-color: #ff0;
+	width: 200px
+	transition: background-color 0.4s, width 0.2s
+}
+Hover: hover {
+	background-color: #0ff;
+	width: 400px
+}
+注意：
+1.transition属性写在过渡前后两个样式中的哪一个中无所谓。
+2.在实现过渡动画时，很多初学者会把transition和transform搞混。要记住，transition才是实现过渡动画的关键，transform只是一个css转换属性
+
+transition-property: width,height,background-color,border-width;
+transition-duration: 2s; 动画执行时间
+transition-timing-function: ease-in;（linear, ease , ease-in, ease-out, ease-in-out）
+transition-delay: 500ms; 动画延迟执行时间
+transform转变动画
+
+transform可以对元素进行旋转，缩放，倾斜，移动等四类操作，.一般是配合transition的属性一起使用
+	1、rotate()     rotate(angle)，2D 旋转，参数为角度，如45deg；rotate(x,y,z,angle)，3D旋转
+	2、scale  主要类型同上，有scale(x, y)、scale3d(x, y, z)、scaleX(x)、scaleY(y)、scaleZ(z)，其中x、y、z为收缩比例
+	3、skew  skew(x-angle, y-angle)，沿着x和y轴的2D倾斜转换；skewX(angle)，沿着x轴的2D倾斜转换；skew(angle)，沿着y轴的2D倾斜转换
+	4、translate  ranslate(x, y)，定义向x和y轴移动的像素点；translate(x, y, z)，定义像x、y、z轴移动的像素点；translateX(x)；translateY(y)；translateZ(z)。
+
+Animation
+关键：1、keyframes关键字定义规则，并绑定到一个选择器上2、规定动画的名称(animation-name),规定动画的时长(animation-duration)
+@keyframes wllk {
+	left: 200px
+	background-color:bule;
+	transform: rotate(45deg)
+}
+.trans2 {
+	animation: wllk 2s;
+	animation-fill-mode: forwards
+}
+
+(1) name：需要绑定到选择器的keyframe名称。
+(2) duration：完成该动画需要花费的时间，秒或毫秒。
+(3) timing-function：跟transition-linear一样。
+(4) delay：设置动画在开始之前的延迟。
+(5) iteration-count：设置动画执行的次数，infinite为无限次循环。
+(6) direction：是否轮询反向播放动画。normal，默认值，动画应该正常播放；alternate，动画应该轮流反向播放。
+
+
+5.setTimeout函数（参数置0， 6.ES6promise函数，除了promise之外还有哪些实现异步的方法 
+   实现异步
+	1、回调函数
+	2、事件监听
+	3、发布/订阅
+js执行机制（promise,setTimeout执行顺序）
+js是单线程语言，js按照语句的执行顺序执行，但是js的任务可以分为两类
+1、同步任务：需要执行的任务进入主线程排队
+2、异步任务：没有立马执行 但是需要被执行进入任务队列 
+js事件循环：
+1、所有同步任务进入主线程，形成一个执行栈
+2、除主线程外还有任务队列，当异步任务有运行结果后就会在任务队列中注册一个事件，
+3、当主线程的执行栈执行完毕后，就会去读取任务队列是否有事件，事件对应的异步任务就会从结束等待状态，进入执行栈被执行
+4、主线程不断重复上述步骤
+
+（异步和同步事件进入不同的执行场所，同步任务进入主线程执行，异步任务进入event table注册函数，当异步事件执行完毕后，将event table函移入任务队列内，当主线程执行栈的同步任务执行完毕后，会读取event queue的函数进入主线程执行，上述过程不断循环，形成event loop）
+ 	setTimeOut的执行：
+1，setTimeout的函数异步执行，进入event table等待计时
+2、主线程继续执行同步任务
+3、setTimeOut的计时时间到之后，该函数进入任务队列中
+4、主线程内同步任务执行完毕后，任务队列中的函数进入主线程执行
+5、如果主线程同步任务结束的时间小于延迟事件，则函数等待时间是计数时间；若主线程的同步任务执行时间大于等待时间，则函数需要等待时间大于计数时间
+
+setTimeout(fn(),0) 主线程结束后立即执行
+
+除了同步任务和异步任务，还可以分为 宏任务（setTimeOut, setInterval）微任务（promise , process.$nextTick）
+
+执行宏任务  —执行结束—> 是否有微任务（有： —> 执行微任务  —> 执行结束 —> 执行微任务）（无： —> 执行宏任务）
+
+7.ES6其他好用的地方 
+	let、const、箭头函数、解构赋值、Set、Map相关东西。
+	let没有变量提升，无法在定义之前调用
+	暂时性死区：在代码块内，使用let命令声明变量之前，该变量都是不可用的。这在语法上，称为“暂时性死区”
+	const 是一个只读的常量，所以在声明时就应该赋值。本质：const保证的不是值不可以变化，而是变量指向的那块地址不可以变化，
+	对于简单类型，值就保存在变量指向的那个内存地址。但对于复合类型的数据（主要是对象和数组），变量指向的内存地址，保存的只是一个指针，const只能保证这个指针是固定的，至于它指向的数据结构是不是可变的，就完全不能控制了。
+	
+	想将对象冻结，应该使用Object.freeze方法。
+
+	ES6：var、function、let、const、import、class（声明变量的几种方式）
+		
+8.Js基本数据类型
+   undefined, null, number, string, boolean
+
+9.之前说了ES6set可以数组去重，是否还有数组去重的方法 
+
+10.如何实现元素的垂直居中 
+	1、绝对定位和margin
+		position: absolute
+		top: 0
+		left: 0
+		bottom:0
+		right:0
+		margin: auto
+（方法对父元素使用相对定位，然后子元素使用绝对定位，这样子元素将相对父元素进行定位，接着设置各个方向的 left/top/right/bottom 为 0，再设置 margin: auto ）
+	2、第二种是已知宽度，margin 负值的方法
+		position: absolute
+		top:50%
+		left:50%
+		margin-left: -width /2
+		margin-top: -height / 2
+	3、绝对定位和transform
+		position: absolute
+		top:50%
+		left:50%
+		transform: tanslate(-50%, -50%)
+	4、flex
+		display: flex;
+		justify-content	:center
+		align-items:center
+	5、display:table  给父元素设置display:table 给子元素设置:display:table-cell 结合vertical-middle: center text-align:center
+
+ 11.跨域的原理（没有问怎样跨 
+	出现跨域的原因是违反了同源策略（即协议 + 域名+端口号相同）
+
+12.是否接触过后端 
+	之前大学的时候有做过相关的项目，是有php完成过一个茶叶售卖宣传网站
+
+13.有什么想问他的 
+
+14、发布/订阅 和观察者模式的区别
+	观察者是知道观察谁，但是发布-订阅中间是一个消息代理，双方根本不关心对方是谁。观察者模式和发布订阅模式最大的区别就是发布订阅模式有个事件调度中心。
+	观察者模式：观察者和目标直接进行交互
+	发布/订阅：而发布订阅模式中统一由调度中心进行处理，订阅者和发布者互不干扰。这样一方面实现了解耦，还有就是可以实现更细粒度的一些控制。比如发布者发布了很多消息，但是不想所有的订阅者都接收到，就可以在调度中心做一些处理，类似于权限控制之类的
+
+
+15.面向对象编程环境的几个特性
+	面向对象编程的三大特性是 封装、继承、多态。
+	封装：是指对象把自己的数据和对数据的操作封装在了一起；
+
+	继承：是指子类对父类的继承，子类把父类的数据和对数据的操作继承了过来，同时又增添了自己的数据和对数据的操作；
+
+	多态：主要有两种类型的多态。一种是操作的名称的多态，即多个操作的名称一样，但接受的消息类型必须不同；另一种是与继承相关的多态，来自不同类型的对象对同一操作的调用产生不同的效果。
+
+
+16、普通函数和箭头函数
+
+	箭头函数相当于匿名函数，并且简化了函数定义。
+	箭头函数有两种格式，一种只包含一个表达式，连{ ... }和return都省略掉了。还有一种可以包含多条语句，这时候就不能省略{ ... }和return。
+	1、不能作为构造函数，不能使用new
+	2、箭头函数不绑定arguments
+	3、不绑定自己的this
+
+17、this
+	this只有在执行的时候才能确认指向。This是执行上下文（全局，函数，eval()）的一部分
+       箭头函数的this指向：箭头函数没有自己的this，看箭头函数的外层有没有函数，如果有 箭头函数的this指向外层函数的this，如果没有 则指向window
+
+18.原型链
+	构造函数中有prototype属性，也是一个对象,称之为原型对象,而该构造函数的原型对象中有constructor构造器指向自己的构造函数。
+	构造函数可以实例化对象，实例化对象中有__proto__，它的指向为该构造函数的的原型对象。 
+	原型：
+	（1）实例对象中__proto__这个属性,叫原型，是一个对象，是供浏览器使用的，不是标准的属性。__proto__可以称之为原型对象。 
+	（2）构造函数中有prototype这个属性，叫原型，也是一个对象，这个对象程序员使用。 同时,构造函数中prototype称之为原型对象。
+	 原型链： 它是一种关系,实例对象和原型对象之间的关系就叫原型链。它们的关系是通过原型(__proto)来联系的
+
+19、继承
+
+
+20、css render tree
+处理HTML标签建立DOM树
+处理CSS标签建立CSSOM树
+连接CSSOM树和DOM树形成一个render树
+在render树上运行布局来计算每个节点的形状
+在屏幕上画每一个节点
+为了形成渲染树，浏览器大致做的事情有:
+
+从DOM树根节点开始，遍历每一个可见的节点
+一些节点是完全不可见的（比如 script标签，meta标签等），这些节点会被忽略，因为他们不会影响渲染的输出
+一些节点是通过CSS样式隐藏了，这些节点同样被忽略——例如上例中的span节点在render tree中被忽略，因为span样式是display:none;
+对每一个可见的节点，找到合适的匹配的CSSOM规则，并且应用样式
+显示可见节点（节点包括内容和被计算的样式）
+(记住“visibility:hidden”和“display：none”之间的不同，“visibility:hidden”将元素设置为不可见，但是同样在布局上占领一定空间（例如，它会被渲染成为空盒子），但是“display:none”的元素是将节点从整个render tree中移除，所以不是布局中的一部分 。)
+ 
+
+
+21、udp和tcp的区别
+TCP与UDP区别总结：
+
+1、TCP面向连接（如打电话要先拨号建立连接）;UDP是无连接的，即发送数据之前不需要建立连接
+
+2、TCP提供可靠的服务。也就是说，通过TCP连接传送的数据，无差错，不丢失，不重复，且按序到达;UDP尽最大努力交付，即不保证可靠交付
+
+3、TCP面向字节流，实际上是TCP把数据看成一连串无结构的字节流;UDP是面向报文的
+
+UDP没有拥塞控制（慢启动、拥塞避免、快速重传和快速恢复），因此网络出现拥塞不会使源主机的发送速率降低（对实时应用很有用，如IP电话，实时视频会议等）
+4、每一条TCP连接只能是点到点的;UDP支持一对一，一对多，多对一和多对多的交互通信
+
+5、TCP首部开销20字节;UDP的首部开销小，只有8个字节
+6、TCP的逻辑通信信道是全双工的可靠信道，UDP则是不可靠信道
+
+
+22、
+typeof 的值有七种（string, number, function, boolean, function, object, undefined） 不能判断null，array
+由于数组和对象都返回object，需要使用instanceof
+instanceof 是用来判断A是否为B的实例，表达式为：A instanceof B，如果A是B的实例，则返回true,否则返回false。
+instanceof 运算符用来测试一个对象在其原型链中是否存在一个构造函数的 prototype 属性。
+
+
+23、Vue的实现原理
+	双向数据绑定：mvvm
+	数据绑定的几种方式1、发布订阅2、脏值检测（angular只有在指定的事件触发时进入脏值检测）3、数据劫持
+	vue.js 则是采用数据劫持结合发布者-订阅者模式的方式，通过Object.defineProperty()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调。
+	思路整理：
+	1、首先需要实现一个数据监听器observer，能够对对象所有属性进行监听，并且可以在变动后拿到最新数据通知订阅者
+	2、实现一个指令解析器compile,对每个元素的节点指令进行扫描和解析，根据指令模板替换数据，以及绑定相应的更新函数
+	3、实现一个watcher，连接observer和compile的桥梁，能够订阅到每个数据的变化，执行指令上相应的回调函数并更新视图
+	4、mvvm的入口函数
+
+	observer: defiendPorperty来监听属性变动，将需要observe的数据对象进行递归遍历，包括子属性对象的属性，都加上 setter和getter 这样的话，给这个对象的某个值赋值，就会触发setter，那么就能监听到了数据变化
+	Watcher订阅者作为Observer和Compile之间通信的桥梁，主要做的事情是：
+在自身实例化时往属性订阅器(dep)里面添加自己
+自身必须有一个update()方法
+待属性变动dep.notice()通知时，能调用自身的update()方法，并触发Compile中绑定的回调
+
+24、前端优化的方法 
+	H5+CSS3方面: 
+	css动画代替js方法、使用图片裁剪减少图片请求次数、懒加载技术、 
+	JS方面： 
+	插入DOM片段最好使用文档片段fragment、使用innerHTML、减少对HTMLCollection的查询次数、算法方面的优化（优化循环）、展开循环（使用DUFF装置）、 
+	使用Web Worker后台执行耗时的javascript代码、使用定时器、压缩代码、
+
+25、hasOwnProperty
+	判断实例对象是否有指定的属性
+// 字面量
+const foo = {
+    a: 1
+}
+console.log(foo.hasOwnProperty('a')) // true
+// Object.create(null) 空原型链
+const bar = Object.create(null)
+bar.a = 1
+console.log(bar.hasOwnProperty('a')) // Uncaught TypeError: bar.hasOwnProperty is not a function
+// 显示绑定
+console.log(Object.prototype.hasOwnProperty.call(bar, 'a')) // true
+
+
+26、Ts 有什么优势
+TypeScript有以下优点。
+
+它提供了可选静态类型的优点。在这里，Typescript提供了可以添加到变量、函数、属性等的类型。
+Typescript能够编译出一个能在所有浏览器上运行的JavaScript版本。
+TypeScript总是在编译时强调错误，而JavaScript在运行时指出错误。
+TypeScript支持强类型或静态类型，而这不是在JavaScript中。
+它有助于代码结构。
+它使用基于类的面向对象编程。
+它提供了优秀的工具支持和智能感知，后者在添加代码时提供活动提示。
+它通过定义模块来定义名称空间概念
+TypeScript有以下缺点:
+
+TypeScript需要很长时间来编译代码。
+TypeScript不支持抽象类。
+如果我们在浏览器中运行TypeScript应用程序，需要一个编译步骤将TypeScript转换成JavaScript。
+
+
+27、原型，class B 继承 class A 翻译成 es5 应该是什么样子
+ ES6中Class充当了ES5中，构造函数在继承实现过程中的作用
+ 同样有原型属性prototype，以及在ES5中用来指向构造函数原型的__proto__属性，这个属性在ES6中的指向有一些主动的修改。
+一个继承语句同时存在两条继承链：一条实现属性继承，一条实现方法继承。
+
+class A extends B {}
+A.__proto__ === B;  //继承属性
+A.prototype.__proto__ === B.prototype;  //继承方法
+ES6的子类的__proto__是父类，子类的原型的__proto__是父类的原型
+
+
+
+28.虚拟dom
+
+Vue.js通过编译将template 模板转换成渲染函数(render ) ，执行渲染函数就可以得到一个虚拟节点树
+在对 Model 进行操作的时候，会触发对应 Dep 中的 Watcher 对象。Watcher 对象会调用对应的 update 来修改视图。这个过程主要是将新旧虚拟节点进行差异对比，然后根据对比结果进行DOM操作来更新视图。
+可以把Virtual DOM 理解为一个简单的JS对象，并且最少包含标签名( tag)、属性(attrs)和子元素对象( children)三个属性
+虚拟DOM的最终目标是将虚拟节点渲染到视图上。但是如果直接使用虚拟节点覆盖旧节点的话，会有很多不必要的DOM操作。例如，一个ul标签下很多个li标签，其中只有一个li有变化，这种情况下如果使用新的ul去替代旧的ul,因为这些不必要的DOM操作而造成了性能上的浪费。
+为了避免不必要的DOM操作，虚拟DOM在虚拟节点映射到视图的过程中，将虚拟节点与上一次渲染视图所使用的旧虚拟节点（oldVnode）做对比，找出真正需要更新的节点来进行DOM操作，从而避免操作其他无需改动的DOM。
+其实虚拟DOM在Vue.js主要做了两件事：
+
+提供与真实DOM节点所对应的虚拟节点vnode
+将虚拟节点vnode和旧虚拟节点oldVnode进行对比，然后更新视图
+
+Vue的diff算法是基于snabbdom改造过来的，仅在同级的vnode间做diff，递归地进行同级vnode的diff，最终实现整个DOM树的更新。因为跨层级的操作是非常少的，忽略不计，这样时间复杂度就从O(n3)变成O(n)。
+
+diff 算法包括几个步骤：
+
+用 JavaScript 对象结构表示 DOM 树的结构；然后用这个树构建一个真正的 DOM 树，插到文档当中
+当状态变更的时候，重新构造一棵新的对象树。然后用新的树和旧的树进行比较，记录两棵树差异
+把所记录的差异应用到所构建的真正的DOM树上，视图就更新了
+diff 算法的实现过程
+
+diff 算法本身非常复杂，实现难度很大。本文去繁就简，粗略介绍以下两个核心函数实现流程：
+
+patch(container,vnode) :初次渲染的时候，将VDOM渲染成真正的DOM然后插入到容器里面。
+patch(vnode,newVnode):再次渲染的时候，将新的vnode和旧的vnode相对比，然后之间差异应用到所构建的真正的DOM树上。
+
+29、ativated和deativated
+<keep-alive> 包裹动态组件时，会缓存不活动的组件实例，而不是销毁它们。和 <transition> 相似，<keep-alive> 是一个抽象组件：它自身不会渲染一个 DOM 元素，也不会出现在父组件链中。
+当组件在 <keep-alive> 内被切换，它的 activated 和 deactivated 这两个生命周期钩子函数将会被对应执行。
+
+
+1、基础数据类型：存储在栈的简单数据，undefined null array number boolean stri ng
+2、引用数据类型：Array 对象，function 存储在堆空间
+
+深拷贝：
+1.复制一个完整全新的对象，不共享内存，新变量改变不会影响原对象
+浅拷贝：
+2、只是复制了变量的引用即指向某个地址的指针，新旧变量使用同一块内存
+
+// const cloneDeep = data => JSON.parse(JSON.stringify(data))
+// 对象数组的深拷贝
+let cloneDeep = obj => {
+if (obj instanceof Array) {
+  let arr = []
+  for (var i = 0; i < obj.length; i++) {
+    arr[i] = cloneDeep(obj[i])
+  }
+  return arr
+}
+if (obj instanceof Object) {
+  var ret = {}
+  for (var j in obj) {
+    ret[j] = cloneDeep(obj[j])
+  }
+  return ret
+ }
+ return obj
+}
+
+给你一个DOM元素，用CSS的方式让他呈现两色的效果，只能有一个DOM元素
+
+一个数组只有1和2，排序，1在前面，2在后面
+
+JS的事件模型，捕获和冒泡，阻止冒泡
+
+preventDefault和stopPropagation区别
+
+
+
+
+补充：
+	a自带下划线：text-decoration: none
+
+
+
+For of为什么不能遍历对象
+
+
+酷家乐面试
+
+6道js（闭包、原型链、this、类型判断、变量提升、函数提升都有）、1道css（盒模型）
+
+1、  2 1 1
+console.log(foo()); 
+
+var foo = function() {
+    return 1;
+}
+
+console.log(foo()); 
+
+function foo() {
+    return 2;
+}
+
+console.log(foo()); 
+
+2、for(var i = 0; i < 6; i++) {
+    setTimeout(function() {
+        console.log(i);         //位置1
+    }, 1000 * i);
+}
+
+console.log(i);                 //位置2
+
+      1、 实现的效果；
+  2、 将 var i = 0; 改成 let i = 0; 效果如何；
+  3、除了上面的方法，还有什么方法可以达到上面的效果，并能规避上面的错误；
+  4、将 setTimeout 的时间 1000 * i 改成 0，效果如何；
+
+答：1、 先打印一个6，再每隔一秒打印一个6；
+
+  2、 这里光注意 let 在 循环内的表现，疏忽了位置2的报错，正确答案是：首先报出一个 ReferenceError: i is not defined，然后每隔一秒输出 0,1,2,3,4,5；
+
+  3、手写代码：
+	for(var i = 0; i < 6; i++) { (function(i) { setTimeout(function() { console.log(i); }, 1000 * i); })(i) } console.log(i);
+    4、先打印位置2的1个6，然后打印出6个6
+
+
+3、function foo() {
+    console.log(typeof kkk);
+    console.log(typeof bar);
+
+    var kkk;
+    function bar() {};
+}
+
+console.log(typeof foo());
+问：1、效果如何；
+  2、函数没有返回值，返回什么；
+  3、typeof 在判断类型时有什么弊端；
+  4、function 同样算是一种 object，为什么不像 Array 一样返回 object 而是返回 function？
+
+答：1、undefined、function、undefined；
+  2、undefined；
+  3、在判断 Array、Date等对象都返回 object，不能确切判定出，typeof null = object；
+
+4、var bar = {
+    foo: function() {return this.baz},
+    baz: 1
+};
+(function() {
+    console.log(typeof arguments[0]());
+})(bar.foo)
+undefined（这里另有坑）
+
+  一开始我认为 arguments[0] () 可以转换为 bar.foo()，所以我的答案是 number。后来面试官提示这里匿名函数参数传递的是函数的地址，我连忙改口说因为这里的函数调用是 function 调用，故 this 指向 window，所以是 undefined。
+  后来回来之后，复盘的时候发现这里似乎被面试官挖了一个坑往里面跳，答案仍旧是 undefined，不过原理却完全不同。
+  这里的 this 指向的不是 window，而是 arguments 这
+
+
+
+已知宽高的父元素div，让未知宽高 div 水平垂直居中
+  这题我答了运用 display:flex; 和 transform: translate(-50%, -50%); 两种办法（详情可参见 CSS 实现水平居中与垂直居中）。
+
+上题回答的 transform: translate(-50%, -50%);中的 -50%，是参照父元素的宽高偏移还是参照子元素的宽高偏移？
+  起初我没答上来，答案是 translate（-50％, -50％）作用是，往上（x轴），左（y轴）移动自身长宽的50％，以使其居于中心位置。
+
+请用 array 模拟栈的 pop()、push() 方法，时间复杂度应为 O(1)。
+
+
+js、nodejs 基础
+
+重点考察的部分，基础不好的建议直接拒了，这块没有太大商量余地
+
+闭包
+作用域
+原型链
+变量提升
+函数参数值传递
+this 指向问题
+函数提升以及优先级问题
+new 操作符做了什么？
+用 ES5 实现一个继承（有哪些方式）
+0.2+0.1不等于0.3问题（浮点数精度）
+堆、栈、队列是什么？都有什么区别？有什么应用？
+深拷贝、浅拷贝问题（immutable是怎么实现的？）
+typed array 问题
+es6 箭头函数问题
+let 会提升吗？声明、初始化、赋值等概念。什么是暂时性死区？
+什么是 iterator？for of 用过吗？
+call、apply、bind 区别，bind 怎么实现的？
+caller、callee 了解吗？什么时候会用到？建议用吗？
+es6 其他特性用过吗？（Class、Map、Set、Decorator 等分别考察）
+promise 实现原理（怎么实现取消？怎么实现 promise all、race 等？）
+async await 知识点（await 的作用，async 返回的是什么）
+generator 又是什么？
+v8 线程模型、event loop（async、promise、nextTick、setTimeout、setImmediate 经典问题变着花样考）
+进程和线程是什么？有什么区别？
+v8 垃圾回收机制
+输入 URL，浏览器的执行过程又是怎么样的？（浏览器解析方式、顺序，async、defer等）
+了解前端模块化吗？有几种规范？（commonjs 和 es module 都是怎么实现的？有啥区别？）
+css、html、dom、浏览器相关基础
+
+没什么好说的，前端必修课，样式、html、浏览器相关的不过关建议直接拒了
+
+盒模型
+样式覆盖优先级问题
+选择器相关问题
+怎么解决边距重叠？（什么是 BFC？怎么创建 BFC？）
+flex 弹性布局了解吗？用过哪些？（问一些实际问题）
+移动端的一些坑
+css modules 了解吗？
+sass、less 用过吗？用到了什么特性？实践情况
+移动端用什么距离单位？（px、百分比、vw、vh、rem 等）
+什么是逻辑像素，什么是物理像素，设备像素比又是什么？
+事件捕获冒泡
+哪些操作导致 reflow、repaint、composite
+什么时候用 css 动画，什么时候用 transition？选择标准是什么？（如何知道动画执行结束了？）
+dom api 相关
+cookie、localStorage、sessionStorage 区别和使用场景
+跨域相关问题，怎么解决？几种方式？
+缓存相关（强缓存、协商缓存，由此引申 http 相关缓存知识）
+计算机基础
+
+前端对于协议这块必须是要清晰的，如果是 nodejs 团队建议加大难度
+
+前端相关网络知识（tcp，dns，cdn，http，https，http2）
+安全相关（xss、csrf）
+怎么实现登录的？（cookie based、session based、jwt）
+https 怎么做到防止数据包被拦截的？
+证书是什么？
+几种常见加密算法，对称加密、非对称加密
+设计模式、架构、编程思想
+
+主要考察架构设计能力，软件工程等基本素质，对于资深前端这块有要求
+
+用过什么设计模式？怎么实现的？应用场景？
+项目是怎么做架构设计的？谈谈你的理解
+mvvm 和 mvc 是什么？有啥区别啊
+函数式和响应式的理解
+什么是柯里化，怎么实现柯里化？纯函数是啥？
+defineProperty 用过吗？有什么问题？descriptor 是什么？有哪些属性干嘛用的？initializr 是啥？
+装饰模式了解吗？装饰器用过吗？哪些场景？（高阶组件、es6 decorator）
+继承和组合用过吗？什么时候用继承什么时候用组合？（mixin 是什么东西？js 是多继承还是单继承？为什么是单继承？）
+什么是开闭原则？
+什么是控制反转？什么是依赖注入？
+什么是面向切面编程
+你了解的反模式是什么
+了解尾调用优化吗？通常用在什么场景？js 引擎有做这层优化吗？什么是尾递归？
+数据结构、算法相关（easy 难度）
+
+对于前端来说考到 easy 难度差不多了（我自己也是个弱鸡~）
+
+数据结构比如树、链表相关的在前端应用界是常用的，建议考察
+
+图论、动归、线段树、蓄水池抽样等这种根据自己的业务领域来决定是否有必要考察（=. =，web 前端我感觉不需要）
+
+大 O 表示法，怎么计算时间复杂度和空间复杂度
+贪心算法是什么？动态规划是什么？（背包、爬楼梯、金矿问题）
+实现一个记忆化的斐波那契数列
+求并集、交集
+链表相关（排序、合并、去重）
+树相关（对称二叉树、翻转二叉树、前中后序遍历、深度广度优先遍历、递归非递归实现）
+智力题
+
+主要考察反应速度、逻辑思维、推理能力，达到正常以上水平即可
+
+25 匹马
+烧绳子
+推理题
+应用框架原理
+
+考察是不是只会用，只是技术栈的罗列，而不清楚内部的原理机制，更没有借鉴落地的场景，这块也是重点考察
+
+react、angular、vue 实现原理（三个选一个候选人最擅长的，针对某个流程详细考察，比如 dom diff、dom patch、脏检查、双向绑定、依赖收集等）
+setState 相关问题，dirty component 是啥
+forceUpdate() 用过吗？是什么干嘛用的？与 setState 有啥区别？
+props 和 state
+组件设计相关（怎么设计？受控和非受控是什么？）
+children.map 是什么，和普通的 map 有什么区别？使用场景
+cloneElement 干嘛用的，使用场景，和 createElement 区别
+生命周期相关
+react 16 新特性，react 17 前瞻，fiber，hooks，suspense，异步渲染等
+redux、mobx、vuex、dva 等状态管理框架实现原理，针对几个点详细考察
+redux 或 mobx 怎么处理 side effect？
+redux 中间件模型，thunk 怎么实现？saga 怎么实现的？
+koa、express 用过吗？中间件模型了解吗？有啥区别？
+router 用过吗？核心流程怎么实现的？
+用过什么 xhr 封装库？（axios、fetch，各家长短？有啥坑吗？）
+babel 原理（有哪些东西，分别干嘛用的，怎么实现的，runtime，polyfill，register）
+webpack 核心流程原理，怎么实现模块化的，treeshaking 怎么做的？
+其他
+
+随便问点一些业务上的思考，技术加分项，或技术视野、分享、选型方面的考虑
+
+使用 typescript 吗？如何看待的，什么情况下用，类型声明文件怎么写的
+单元测试（jest、mocha、ava）
+如何发布一个二方或三方包，有哪些考量
+技术选型的考量指标、维度
+mongo、es、redis 方面相关知识
+工程化、ci、docker、k8s 相关知识
+大概就这些，持续更新......
+
+如果有兴趣来酷家乐，可以找我内推，我的邮箱：feifan@qunhemail.com
+
+
