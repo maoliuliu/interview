@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .drag {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: gray
+    }
+  </style>
+</head>
+<body>
+  <div id="drag">
+  </div>
+  
+  <script>
+    let dragDom = document.querySelector('#drag')
+    let disX, disY
+
+    function keydown(e) {
+      let event = e || window.event
+      if (event.target == dragDom) {
+        //算出鼠标相对元素的位置
+        disX = event.clientX - dragDom.offsetLeft 
+        disY = event.clientY - dragDom.offsetTop
+      }
+    }
+    function move(e) {
+      let event = e || window.event
+      // 浏览器窗口的内部高度
+      let wHeight = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth 
+      let wWidth = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+      // 获取元素宽高
+      let domHeight = dragDom.clientHeight
+      let domWidth = dragDom.clientWidth
+
+      let moveX = event.clientX - disX // 拖拽时元素相对浏览器的坐标
+      let moveY = event.clientY - disY
+
+      dragDom.style.left = moveX + 'px'
+      dragDom.style.top = moveY + 'px'
+      // 处理边界情况
+      if (moveX < 0) {
+        dragDom.style.left = 0
+      }
+      if (moveY < 0) {
+        dragDom.style.top = 0
+      }
+      if (moveX + domWidth > wWidth) {
+        dragDom.style.left = wWidth - domWidth + 'px' 
+      }
+      if (moveY + domHeight > wHeight) {
+        dragDom.style.top = wHeight - domHeight + 'px'
+      }
+    }
+    const debounce = (fn, time) => {
+      let timer = null
+      return (...args) => {
+        if (timer) clearTimeout(timer)
+        timer = setTimeout(() => {
+          fn(...args)
+        }, time)
+      }
+    }
+    document.addEventListener('mousedown', keydown)
+    document.addEventListener('mousemove', debounce(move, 2000))
+  
+    document.addEventListener('mouseup', (e) => {
+      document.removeEventListener('mousemove', debounce(move, 2000))
+      document.removeEventListener('mousedown', keydown)
+    })
+  </script>
+</body>
+</html>

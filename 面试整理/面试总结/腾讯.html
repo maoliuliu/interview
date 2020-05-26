@@ -1,0 +1,47 @@
+
+console.log('start')
+
+setTimeout(() => console.log('setTimeout-1'), 0)
+
+async function todo1 (params) {
+
+    console.log('todo1-await-above')
+
+    await Promise.resolve(99)
+
+    console.log('todo1-await-under')
+
+    setTimeout(() => console.log('setTimeout-2'), 0)
+
+}
+
+todo1()
+
+new Promise((resolve, reject) => {
+
+    console.log('promise-1')
+
+    resolve()
+
+}).then(data => {
+
+    console.log('promise-then-1')
+
+})
+
+console.log('end')
+
+30 * 8 - 30 /4 = 
+
+/**
+start
+todo1-await-above
+promise-1
+end
+todo1-await-under
+promise-then-1
+setTimeout-1
+'setTimeout-2
+*/
+
+页面内有一个正方形元素，实现对其拖拽和放下，需要考虑窗口的边界情况

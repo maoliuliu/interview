@@ -1,0 +1,53 @@
+1、set的兼容性问题
+  <script>
+    let arr = [1,2,3,3,4,5,2,3]
+    let set = new Set(arr)
+    let arr2 = [...set]
+    let arr3 = Array.from(set)
+    console.log(arr2) //[1,2,3,4,5]
+    console.log(arr3) //[1,2,3,4,5]
+  </script>
+2、写个函数，参数为n和value，需要返回一个长度为n的数组，里面每个元素都是value，不能使用循环。
+  <script>
+    function fn(n, value) {
+     return new Array(n).fill(value)
+    }
+  </script>
+3、变量提升
+  var声明的变量会被提升到作用域顶部，并初始化为undefined,
+  let声明的变量不会被提升到顶部，也未被初始化
+
+4、var和let的区别
+    * let无变量提升现象
+    * var 声明的变量是允许重复命名的，且后边的会覆盖掉前边的变量；let 声明的变量是不允许重复命名相同变量的let或const,会报错
+    *  var声明的全局变量等价于顶层对象而let不会
+    <script>
+      var a = 1;
+      console.log(window.a);   //输出1
+      let  b = 1;
+      console.log(window.b);  //输出undefined
+    </script>
+5、for...in 循环
+    * for...in语句以任意顺序遍历一个对象的可枚举属性。对于每个不同的属性，语句都会被执行。
+    * 用于对数组或者对象的属性进行循环操作
+    问题：
+      1.index索引为字符串型数字，不能直接进行几何运算
+      2.遍历顺序有可能不是按照实际数组的内部顺序
+      3.使用for in会遍历数组所有的可枚举属性，包括原型。例如上栗的原型方法method和name属性
+      所以for in更适合遍历对象，不要使用for in遍历数组
+      for in遍历的是数组的索引（即键名），而for of遍历的是数组元素值。
+      <script>
+        var myObject={
+        　　a:1,
+        　　b:2,
+        　　c:3
+        }
+        // 如果不想遍历原型方法和属性的话，可以在循环内部判断一下,hasOwnPropery方法可以判断某属性是否是该对象的实例属性
+        for (var key in myObject) {
+        　　if(myObject.hasOwnProperty(key)){
+        　　　　console.log(key);
+        　　}
+        }
+      </script>
+5、for...of 循环
+

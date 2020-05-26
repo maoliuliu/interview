@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .move {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: gray
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="move">
+    </div>
+  </div>
+  <script>
+    let moveElem = document.querySelector('.move') //待拖拽元素
+    let windowHeight, windowWidth; // 窗口宽高
+    let elemHeight, elemWidth; // 元素宽高
+    let dragging; //是否激活拖拽状态
+    let tLeft, ElemTop; //鼠标按下时相对于选中元素的位移
+
+    //监听鼠标按下事件
+    document.addEventListener('mousedown', function (e) {
+      if (e.target == moveElem) {
+        let moveElemRect = moveElem.getBoundingClientRect() // 获取元素相对页面视口的位置
+        dragging = true; //激活拖拽状态
+        windowHeight = document.documentElement.clientHeight // 设置页面视口宽高
+        windowWidth = document.documentElement.clientWidth
+        elemHeight = moveElem.clientHeight // 设置元素宽高
+        elemWidth = moveElem.clientWidth
+        elemX = e.clientX - moveElemRect.left //鼠标按下时和选中元素的坐标偏移:x坐标
+        elemY = e.clientY - moveElemRect.top //鼠标按下时和选中元素的坐标偏移:y坐标
+      }
+    })
+
+    //监听鼠标放开事件
+    document.addEventListener('mouseup', function (e) {
+      dragging = false
+    })
+
+    //监听鼠标移动事件
+    document.addEventListener('mousemove', function (e) {
+      if (dragging) {
+        let moveX = e.clientX - elemX // 拖拽时元素相对视口的坐标
+        let moveY = e.clientY - elemY
+        moveElem.style.left = moveX + 'px'
+        moveElem.style.top = moveY + 'px'
+        if (moveX < 0) { // 处理边界情况
+          moveElem.style.left = 0
+        }
+        if (moveY < 0) {
+          moveElem.style.top = 0
+        }
+        if (moveX + elemWidth > windowWidth) {
+          moveElem.style.left = windowWidth - elemWidth + 'px' // 将left控制最大为视口宽度减去元素宽度
+        }
+        if (moveY + elemHeight > windowHeight) {
+          moveElem.style.top = windowHeight - elemHeight + 'px'
+        }
+      }
+    })
+
+
+
+    var moveElem = document.querySelector('.move'); //待拖拽元素      
+var moveElemParent = moveElem.parentNode; //待拖拽元素的父元素
+
+var dragging; //是否激活拖拽状态
+var tLeft, tTop; //鼠标按下时相对于选中元素的位移
+
+//监听鼠标按下事件
+document.addEventListener('mousedown', function(e) {
+    if (e.target == moveElem) 
+        dragging = true; //激活拖拽状态
+       var moveElemRect = moveElem.getBoundingClientRect();
+        tLeft = e.clientX - moveElemRect.left; //鼠标按下时和选中元素的坐标偏移:x坐标
+        tTop = e.clientY - moveElemRect.top; //鼠标按下时和选中元素的坐标偏移:y坐标
+    }
+});
+
+//监听鼠标放开事件
+document.addEventListener('mouseup', function(e) {
+    dragging = false;
+});
+
+//监听鼠标移动事件
+document.addEventListener('mousemove', function(e) {
+    if (dragging) {
+        var moveX = e.clientX - tLeft, 
+              moveY = e.clientY - tTop;
+
+        moveElem.style.left = moveX + 'px';
+        moveElem.style.top = moveY + 'px';
+      
+    }
+});
+
+  </script>
+</body>
+
+</html>

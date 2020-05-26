@@ -1,0 +1,85 @@
+1、说一下比较熟悉的项目
+
+2、项目的难点
+
+3、兼容性问题的处理
+
+4、vue 框架的问题
+
+5、组件之间的通信
+
+6、节流防抖
+
+7、闭包，为什么会连续输出五个5
+
+8、常用的线程，线程使用
+
+9、算法，快排
+
+10、浏览器缓存
+
+11、跨域，同源策略的原理
+  通常将跨越请求分为"简单请求"和"非简单请求"两类.
+
+12、http和https
+  加密的流程
+  对称加密和非对称加密
+  身份验证，怎么样进行身份验证
+  怎样保证每次数据都是安全的
+
+13、es6常用的方式，promise怎么去获取到错误，不传递错误回调，直接返回一个reject是否可以
+    * promise是ES中一个异步操作对象，它把操作放到堆栈中按照先进先出的原则进行处理
+      1、最常用的，在then的末尾加上catch，跳过then，直接进入catch（返回错误）
+
+      2、参数方法，同样跳过then
+
+      3、错误后面跟then
+      promise获取错误信息的方法有两种，格式也有两种。
+        那么如果then的中间有必要写catch，建议在catch中写throw new Error()，在promise的末尾加上一个catch。
+
+    <script>
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          throw new Error('错误')
+          // reject('错误')
+        }, 100)
+      })
+      .then(() => {})
+      .catch((e) => { 
+        console.log('捕获到错误', e)
+        throw new Error('c错误')
+      })
+      .then(() => {})
+    </script>
+
+14、比较擅长的是什么
+
+15、计算机网络
+
+16、关于尺寸的兼容性问题
+
+17、捕获未处理的Promise错误方法
+
+  监听unhandledrejection事件，即可捕获到未处理的Promise错误
+
+  当一个Promise错误最初未被处理，但是稍后又得到了处理，则会触发rejectionhandled事件
+  <script>
+    window.addEventListener('unhandledrejection', event =>
+    {
+      console.log(event.reason); // 打印"Hello, Fundebug!"
+    });
+      
+    window.addEventListener('rejectionhandled', event =>
+    {
+        console.log('rejection handled'); // 1秒后打印"rejection handled"
+    });
+
+
+    function foo()
+    {
+      Promise.reject('Hello, Fundebug!');
+    }
+      
+    foo();
+  </script>
+

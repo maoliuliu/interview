@@ -1,0 +1,88 @@
+https://juejin.im/post/5e6f4b4e6fb9a07cd443d4a5#heading-19
+
+1、常见的loader
+  file-loader: 
+  source-map-loader
+  sass-loader
+  css-loader
+  es6 -> es5  babel-loader
+2、常见的plugin
+  * html-webpack-plugin  作用一是创建HTML页面文件到你的输出目录，作用二是将webpack打包后的chunk自动引入到这个HTML中
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'src/index.html',
+      inject: true
+    }),
+  * DefinePlugin 允许创建一个在编译时可以配置的全局常量
+    new webpack.DefinePlugin({
+      'process.env': config.dev.env
+    }),
+  * HotModuleReplacementPlugin 模块热替换,如果不在dev-server模式下，需要记录数据，recordPath，生成每个模块的热更新模块。
+    
+  * ModuleConcatenationPlugin 是webpack集成的优化插件， 可以让打包出来的代码文件更小，运行更快！
+
+  * CommonsChunkPlugin 是webpack集成的优化插件
+    CommonsChunkPlugin 主要是用来提取第三方库（如jQuery）和公共模块(公共js，css都可以)，常用于多页面应用程序，生成公共 chunk，避免重复引用。
+
+3、loader和plugin的区别
+  Loader 本质就是一个函数，在该函数中对接收到的内容进行转换，返回转换后的结果。
+  因为 Webpack 只认识 JavaScript，所以 Loader 就成了翻译官，对其他类型的资源进行转译的预处理工作
+
+  Plugin 就是插件，基于事件流框架 Tapable，插件可以扩展 Webpack 的功能，在 Webpack 运行的生命周期中会广播出许多事件，
+  Plugin 可以监听这些事件，在合适的时机通过 Webpack 提供的 API 改变输出结果。
+
+4、loader
+  Loader 的作用很简单，就是处理任意类型的文件，并且将它们转换成一个让 webpack 可以处理的有效模块。
+
+  Loader 可以在 webpack.config.js里配置，这也是推荐的做法，定义在 module.rules 里
+  rule 会包含两个属性：test 和 use，比如 { test: /\.js$/, use: 'babel-loader' } 意思就是：当 webpack 遇到扩展名为 js 的文件时，先用 babel-loader 处理一下，然后再打包它。
+  <script>
+    // webpack.config.js
+    module.exports = {
+      module: {
+        rules: [
+          { test: /\.js$/, use: 'babel-loader' },
+          {
+            test: /\.css$/,
+            use: [
+              { loader: 'style-loader' },
+              { loader: 'css-loader' },
+              { loader: 'postcss-loader' },
+            ]
+          }
+        ]
+      }
+    };
+  </script>
+
+  当 use 是通过数组形式声明 Loader 时，Loader 的执行顺序是从右到左，从下到上。比如暂且认为上方声明是这样执行的：
+
+5、关于 webpack 的工作流程
+  参数解析
+  找到入口文件
+  调用 Loader 编译文件
+  遍历 AST，收集依赖
+  生成 Chunk
+  输出文件
+6、plugin
+  一个 webpack plugin 由如下部分组成：
+
+    一个命名的 Javascript 方法或者 JavaScript 类。
+    它的原型上需要定义一个叫做 apply 的方法。
+    注册一个事件钩子。
+    操作webpack内部实例特定数据。
+    功能完成后，调用webpack提供的回调。
+
+    <script>
+      // plugins/MyPlugin.js
+
+      class MyPlugin {
+        apply(compiler) {
+          compiler.hooks.done.tap('My Plugin', (stats) => {
+            console.log('Bravo!');
+          });
+        }
+      }
+
+      module.exports = MyPlugin;
+    </script>

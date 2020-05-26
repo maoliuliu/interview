@@ -1,0 +1,125 @@
+1、首先实现一个监听器observer，能够监听数据对象内的所有属性，如有变化可以拿到最新值并通知到订阅者
+监听到数据变化之后需要通知订阅者（维护一个数组收集订阅者， 数据变动触发notify,再调用订阅者的update方法） 
+  let data = {name: 2} 监听到name的变化
+  observer(data)
+  data.name = 'duibuqi'
+
+  function observer(data) {
+    if(!data || typeof date !=== 'object'){
+      return
+    }
+    Object.keys(data).forEach((key) => {
+      definedReactive(data, key, data[key])
+    })
+  }
+
+  function definedReactive(data, key, value) {
+    var dep = new Dep()
+    observer(value)
+    Object.definedPorperty(data, key, {
+      value: value,
+      writable: true,
+      get: () => {
+        // 由于需要在闭包内添加watcher，所以通过Dep定义一个全局target属性，暂存watcher, 添加完移除
+        Dep.target && dep.addDep(Dep.target);
+        return value
+      },
+      set: (newValue) => {
+        if (value === newValue) return
+        console.log(`${key}被监听到由${value}改变为${newValue}`)
+        value = newValue
+        dep.notify()
+      }
+    })
+  }
+
+  function Dep () {
+    this.subs = []
+  }
+  Dep.prototype = {
+    addSub: (sub) => {
+      this.subs.push(sub)
+    },
+    notify: () => {
+      this.subs.forEach(sub => {
+        sub.update()
+      })
+    }
+  }
+  // Watcher.js
+  Watcher.prototype = {
+    get: function(key) {
+        Dep.target = this;
+        this.value = data[key]; // 这里会触发属性的getter，从而添加订阅者
+        Dep.target = null;
+    }
+  }
+
+
+
+
+  (1)Object.definedProperty(obj, key, desc) // 直接在一个对象上定义一个新属性或者修改一个已经存在的属性
+    · obj 需要操作的当前的属性
+    · key 需要定义或者修改的属性
+    · desc 属性描述
+    属性描述符：
+      1、数据描述符（value, writable）
+        let Preson = {}
+        Object.definedProperty(Preson, 'name', {
+          value: 'liuliu',
+          writable: false， // 是否可以改变 false不能改变 true可以改变
+        })
+        Person.name = 'lll'
+        console.log(Person.name) // liuliu 
+      2、存取描述符： getter, setter函数功能 
+        get: 给属性提供getter的方法，默认值undefined 改方法返回值被用作属性值
+        get: 给属性提供setter的方法，默认值undefined 接受唯一参数，并将改参数的新值分配给属性
+          let person = {}
+          let temp = null
+          Object.definedProperty(person, 'name', {
+            get: () => {
+              return temp
+            },
+            set: (val) => {
+              temp = val
+            }
+          })
+
+      3、数据描述符和存取描述均具有以下描述符
+          configrable 属性是否可配置，以及是否可删除 
+          enumerable 属性是否会出现在for in 或者Object.keys()的遍历中
+
+      let person = {}
+      person.name = 'lll'
+      // 等于
+      Object.definedProperty(person, 'name', {
+        value: 'lll',
+        configable: true,
+        emunerable: true,
+        writable: true
+      })
+
+      Object.definedProperty(person, 'age', { value: 10 })
+
+      //等同于
+      Object.definedProperty(person, 'age', {
+        value: 10，
+        writable: false,
+        emunerable: false,
+        configurable: false
+      })
+
+      //不变性（对象常量： 结合writable: false 和 configurable: false 就可以创建一个真正的常量属性）
+
+    4、禁止扩展
+      Object.preventExtensions(person)
+      // 依然可配置
+        Object.definedProperty(obj, key, {})
+      person.test = 'll'
+      在非严格模式下，创建属性gender会静默失败，在严格模式下，将会抛出异常。
+
+    5、密封Object.seal() 密封之后不仅不能添加新属性，也不能重新配置或者删除任何现有属性（虽然可以改属性的值）
+
+    6、冻结 Object.freeze() 会创建一个冻结对象，这个方法实际上会在一个现有对象上调用Object.seal(),并把所有现有属性标记为writable: false,这样就无法修改它们的值。
+      它会禁止对于对象本身及其任意直接属性的修改（但是这个对象引用的其他对象是不受影响的,你可以深度冻结一个对象，具体方法为，首先这个对象上调用Object.freeze()然后遍历它引用的所有对象，并在这些对象上调用Object.freeze()。但是一定要小心，因为这么做有可能会无意中冻结其他共享对象。
+    

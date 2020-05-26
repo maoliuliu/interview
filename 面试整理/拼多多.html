@@ -1,0 +1,586 @@
+1、vue3.0的优化
+
+<!-- 2、react 16 生命周期有什么改变
+  componentWillMount，componentWillReceiveProps，componentWillUpdate 准备废除，新增了 static getDerivedStateFromProps 和 getSnapshotBeforeUpdate
+我还详细的介绍了为什么要用 getDerivedStateFromProps 来代替即将废除的三个生命周期，主要是16 版本 render 之前的生命周期可能会被多次执行。
+
+
+3、详细的介绍一下 getDerivedStateFromProps -->
+
+
+4、你在项目中如何做性能优化的
+
+
+5、flex: 0 1 auto; 是什么意思？
+  1、flex是 flex-grow（放大比例） ， flex-shrink（缩小比例）, flex-basis（）的缩写
+  flex 的默认值是以上三个属性值的组合。假设以上三个属性同样取默认值，则 flex 的默认值是 0 1 auto。
+  有关快捷值: auto (1 1 auto) 和 none (0 0 auto)
+
+
+6、less 的 & 代表什么？
+  less是css的预处理语言，他增加了变量，混合（mixin）,函数等功能
+  内层选择器前面的 & 符号就表示对父选择器的引用
+  （1）当前选择器的伪类或者伪元素。如 :hover :focus :after :before
+    <style lang="less">
+      .demo{
+        &:hover {
+          content: '',
+          display: block;
+          height: 0;
+          clear: both;
+          visibility: hidden;
+          zoom: 1;
+        }
+      }
+    </style>
+  (2)作为内层选择器表示对父选择器的引用
+    <style>
+      .demo {
+        &-title{}
+      }
+      .deom {
+        & &-title {}
+      }
+    </style>
+  变量：
+    1、@bule: #fff
+      #header{
+        color: @blue
+      }
+    2、作为属性名和选择器
+      @{变量名}
+      @mySelector: width
+      .@{mySelector} {
+        @{mySelector}: 200px
+        height: 100px
+      }
+    3、作为 url
+
+7、算法题：求最大公共前缀，如 ['aaafsd', 'aawwewer', 'aaddfff'] => 'aa'
+      function longestCom(strs]) {
+        if (!strs || !strs.length) {
+          return ''
+        }
+        let result = strs[0]
+        for (var i = 0; i < strs.length; i++) {
+          for(var j = 0; j < result.lenght; j++){
+            if (strs[i][j] !== result[j]) {
+              if (j = 0) {
+                return ''
+              } e.lse {
+                result = result.subStr(0, j)
+              }
+            }
+          }
+        }
+        return result
+      }
+      编程题：['aa/bb/sd', 'aa/bb/wwewer', 'aa/bb/ddfff'] => 'aa/bb'
+8、interface 和 type 的区别
+  相同点： 1、描述一个对象或者函数 2、允许拓展（extends）
+      <script>
+        interface User {
+          name: string,
+          age: number
+        }
+        interface SetUser {
+          (name:string, age: number):void;
+        }
+        interface User extends Name { 
+          age1: number; 
+        }
+
+        type User1 = {
+          name: string,
+          age: number
+        };
+
+        type SetUser1 =(name: string, age: number): void;
+
+        type User2 = User1 & { age1: number };
+      </script>
+  不同点：
+    1、type 可以声明基本类型别名，联合类型，元组等类型
+    2、interface 能够声明合并
+    <script>
+      // 基本类型别名
+      type Name = string
+      
+      // 联合类型
+      interface Dog {
+        wong();
+      }
+      interface Cat {
+        miao();
+      }
+        
+      type Pet = Dog | Cat
+        
+      // 具体定义数组每个位置的类型
+      type PetList = [Dog, Pet];
+
+      interface User {
+        name: string
+        age: number
+        }
+        
+        interface User {
+        sex: string
+        }
+        
+        /*
+        User 接口为 {
+        name: string
+        age: number
+        sex: string 
+        }
+        */
+    </script>
+9、有用状态管理吗
+
+10、有用 ssr 吗？
+
+
+11、node 熟悉吗
+
+12、class 组件与函数式组件的区别
+
+13、css 优先级
+    important > 内联 > id > 类选择器 = 属性选择器 = 伪类选择器 > 标签选择器
+
+14、避免 css 全局污染。
+    1、相同的选择器，定义不同的css属性，导致页面样式混乱
+
+    解决办法：
+      1、scoped
+      2、css modules
+
+15、css modules 的原理
+    1、功能很单纯，只加入了局部作用域和模块依赖
+    2、产生局部作用域的唯一方法，就是使用一个独一无二的class的名字，不会与其他选择器重名
+    <script>
+      import React from 'react';
+      import style from './App.css';
+
+      export default () => {
+        return (
+          <h1 className={style.title}>
+            Hello World
+          </h1>
+        );
+      };
+    </script>
+    3、构建工具会将类名style.title编译成一个哈希字符串
+      Webpack使用 css-loader
+      <script>
+        module.exports = {
+          entry: __dirname + '/index.js',
+          output: {
+            publicPath: '/',
+            filename: './bundle.js'
+          },
+          module: {
+            loaders: [
+              {
+                test: /\.jsx?$/,
+                exclude: /node_modules/,
+                loader: 'babel',
+                query: {
+                  presets: ['es2015', 'stage-0', 'react']
+                }
+              },
+              {
+                test: /\.css$/,
+                loader: "style-loader!css-loader?modules"
+              },
+            ]
+          }
+        };
+      </script>
+    4、css modules 允许使用：global(.className) 声明全局规则，不会编译为Has串
+    5、定制哈希类名
+      loader: "style-loader!css-loader?modules&localIdentName=[path][name]---[local]---[hash:base64:5]"
+    6、在 CSS Modules 中，一个选择器可以继承另一个选择器的规则，这称为"组合"
+
+16、有一个a标签，如何动态的决定他的样式。
+  先写几个 css，然后外部传一个前缀的方式。面试官问了都要这样吗？我说可以通过 context 的方式，就不需要每个组件都传了
+
+17、import 和 require 导入的区别
+    区别：
+      1、规范不一样 require是AMD的引入规范，import 是es6的语法标准
+      2、调用时间不通
+        require运行时调用，require可以在任何地方引用
+        import是在编译时调用，需要放置在文件开头
+      3、本质
+        require是赋值过程，其实require的结果就是对象、数字、字符串、函数等，再把require的结果赋值给某个变量
+        import是解构过程，但是目前所有的引擎都还没有实现import，我们在node中使用babel支持ES6，也仅仅是将ES6转码为ES5再执行，import语法会被转码为require
+      4、写法
+        require / exports   遵循 CommonJS/AMD，只能在运行时确定模块的依赖关系及输入/输出的变量，无法进行静态优化。
+        const fs = require('fs')
+
+        exports.fs = fs
+        module.exports = fs
+
+        import / export：遵循 ES6 规范，支持编译时静态分析，便于JS引入宏和类型检验。动态绑定。
+        import fs from 'fs'
+        import {default as fs} from 'fs'
+        import * as fs from 'fs'
+        import {readFile} from 'fs'
+        import {readFile as read} from 'fs'
+        import fs, {readFile} from 'fs'
+
+        export default fs
+        export const fs
+        export function readFile
+        export {readFile, read}
+        export * from 'fs'
+
+18、组件库如何做按需加载
+  在babel转码的时候，把整个库‘antd’的引用，变为'antd/lib/button'具体模块的引用。这样webpack收集依赖module就不是整个antd，而是里面的button. 
+
+  webpack中的require.ensure()可以实现按需加载资源包括js,css等，它会给里面require的文件单独打包，不和主文件打包在一起，webpack会自动配置名字
+  webpack的ensure来进行终极开车：#
+　　简单说一下它的思想：webpack编译时，会静态的解析代码中的require.ensure()，同时将模块添加到一个分开的chunk中，新的chunk会被webpack通过jsonp来按需加载。此方法内部依赖于Promise。
+
+　 一共有三个参数：
+
+　　参数一：字符串数组，模块的依赖项，会提前进行加载，一般情况下为空。
+
+　　参数二：依赖项加载完成之后的回调函数。
+
+　　参数三：chunk名。相同chunk名的文件，所有的依赖都会被放进相同的文件束中
+Vue中性能优化的方法吧：
+
+　　1. 可以使用computed计算属性来代替一些函数方法，（函数的话每次都会调用一次，计算属性是根据它依赖的值变化了才会执行）；
+
+    2. 对于一些不需要频繁调用的形式，使用v-if来取代v-show。（v-if的话是只有它存在了才会进行渲染，而v-show是无论如何都会渲染，只不过是将它隐藏了而已）；
+
+　　 3. 为item设置唯一的key值。（快速精准的定位到diff）；
+    6. loading图。（提高用户体验度，用户第一）
+    7. 图片按需加载，图片懒加载技术。（避免不必要的资源浪费）。
+
+19、webpack 如何实现动态加载
+
+  讲道理 webpack 动态加载就两种方式：import()和 require.ensure，不过他们实现原理是相同的。
+  我觉得这道题的重点在于动态的创建 script 标签，以及通过 jsonp 去请求 chunk，
+
+20、webpack 能动态加载 require 引入的模块吗？
+  应该是不能的，前面说了，webpack 支持动态导入基本上只能用import() 和require.ensure。
+
+21、设计一个input 组件需要哪些属性。我说了 value 、defaultValue、onChange
+  value 的类型是什么？
+  onChange 怎么规定 value 的类型
+
+  interface 和 type 的区别
+
+21、写一个 promise 重试函数，可以设置时间间隔和次数。function foo(fn, interval, times) {}
+async function autoRetry(retryMax) {
+  try {
+    if (retryMax <= 0) {
+      return 'error';
+    }
+    let res = await foo(1)
+    return res;
+  } catch (error) {
+    return autoRetry(retryMax - 1);
+  }
+}
+
+function foo(fn, interval, times) {
+
+}
+
+
+22、hash路由方式和锚点如何处理
+    1、继续使用hash路由，锚点改为使用js控制滚动
+
+23、vue router
+  vue的路由分为hash模式和history模式，默认是hash模式；就是浏览器中有符号“#”，使用window.location.hash可以读取到
+  另一种就是history模式，都是用“/”来分隔的，看起来比较美观一些，是HTML5的一个
+
+24、后台拿数据是使用什么？原生的ajax对象了解吗？原生的ajax用promise封装一下要怎么做？
+  1、Promise 就是一个对象，用来传递异步操作的消息
+      特点：1、异步执行回调
+           2、防止回调地狱
+           3、then的链式执行
+           4、区分数据执行和数据处理
+           5、三种状态 pending  resolve reject
+           6、then的特点 接受完成状态和错误状态，参数为函数，支持第三个参数为回调函数，返回promise支持链式调用
+  2、原生的ajax
+      * 创建一个XMLHttpRequest对象
+      * 创建一个新的http请求，指定请求方式get/post， 请求的url, 是否异步
+      * 设置响应HTTP请求状态变化的函数
+      * 发送HTTP请求
+      * 获取异步调用返回的数据
+      * 实现局部刷新
+  3、原生的ajax用promise封装一下
+      const url = 'http://www.baidu.com'
+      const params = { id: 'id=0008' }
+      // 封装一个get请求的方法
+      function featch() {
+        return new Promise((resolve, reject) => {
+          var xmlObj = XMLHttpRequest ? new XMLHttpRequest() : new window.ActiveXObject('Microsoft.XMLHTTP')
+          xmlObj.open('get', `${url}?${params.id}`, true)
+          xmlObj.onreadystateChange(() => {
+            if (xmlObj.readySate === 4) {
+              if (xmlObj.status === 200) {
+                var response = JSON.parse(XHR.responseText);
+                resolve(response);
+              } else {
+                reject(new Error("Request was unsuccessful: " + xmlObj.statusText))
+              }
+            }
+          })
+          XHR.send(null);
+        })
+      }
+      
+
+25、git常用命令，git rebase用过吗？
+
+26、js如何实现继承？
+
+27、假设现在有一个数组，长度是99位，元素是1-100里边的值，数组是无序的也是不重复的，怎么快速的去找到这个数组和1-100相比缺的元素？
+
+28、用css画一个三角形
+  div {
+    width: 0;
+    height: 0;
+    border: 40px solid;
+    border-color: orange blue red green;
+  }
+  正三角形
+  div {
+    width: 0;
+    height: 0;
+    border-width: 0 40px 40px;
+    border-style: solid;
+    border-color: transparent transparent red;
+}
+
+29、null和undefined的区别
+  null表示"没有对象"，即该处不应该有值，代表一个空对象指针，使用typeof运算得到 “object”。
+
+  典型用法是：
+
+  （1） 作为函数的参数，表示该函数的参数不是对象。
+
+  （2） 作为对象原型链的终点。
+
+  undefined表示"缺少值"，就是此处应该有一个值，但是还没有定义。
+
+  典型用法是：
+
+  （1）变量被声明了，但没有赋值时，就等于undefined。
+
+  （2) 调用函数时，应该提供的参数没有提供，该参数等于undefined。
+
+  （3）对象没有赋值的属性，该属性的值为undefined。
+
+  （4）函数没有返回值时，默认返回undefined。
+30、伪数组，如何转化
+  无法直接调用数组方法或期望length属性有什么特殊的行为，不具有数组的push,pop等方法，但仍可以对真正数组遍历方法来遍历它们。
+  典型的是函数的argument参数，还有像调用getElementsByTagName,document.childNodes之类的,它们都返回NodeList对象都属于伪数组。
+  可以使用Array.prototype.slice.call(fakeArray)将数组转化为真正的Array对象。
+
+31、跨域
+  跨域，指的是浏览器不能执行其他网站的脚本。浏览器执行javascript脚本时，会检查这个脚本属于哪个页面，如果不是同源页面，就不会被执行。（所谓同源是指，域名，协议，端口均相同）
+
+  跨域产生的原因：浏览器的同源策略，“同源策略限制了从同一个源加载的文档或脚本如何与来自另一个源的资源进行交互。这是一个用于隔离潜在恶意文件的重要安全机制。”
+
+  跨域方法：
+
+  解决限制接口请求的方法：
+
+  （1）通过jsonp跨域。需要目标服务器配合一个callback函数。JSONP 在 HTML 标签里，一些标签比如 script、img 这样的获取资源的标签是没有跨域限制的。
+
+  （2）使用window.name+iframe来进行跨域
+
+  （3）通过CORS解决AJAX跨域。CORS 是一个 W3C 标准，全称是 "跨域资源共享"（Cross-origin resource sharing）跨域资源共享 CORS 详解。
+
+  （4）通过Nginx反向代理
+
+  （5）图片ping或script标签跨域
+
+  解决限制Dom 查询的方法：
+  （1）postMessage window.postMessage() 是 HTML5 的一个接口，专注实现不同窗口不同页面的跨域通讯。
+
+  （2）document.domain 这种方式只适合主域名相同，但子域名不同的 iframe 跨域。
+
+32、 v-if和v-for的优先级？
+  答：在vue的官网里边其实有说明，官方是不建议v-for和v-if同时使用的；
+    但是如果同时使用的话，通过代码证实v-for 的优先级比 v-if 更高，这意味着 v-if 将分别重复运行于每个 v-for 循环中。
+
+33、怎么理解ts
+  类型检查、ide友好提示、文档、利于维护
+
+34、e2e测试、自动化测试
+
+35、git rebase什么作用
+
+36、你们项目有ci吗，怎么做，提交的时候会做什么事情
+
+37、们有没有统一构建的cli，怎么实现【描述】【举例】
+  基于react全家桶，ts、eslint、埋点上报、sw都可配置，根据配置生成代码模版，开箱即用
+
+
+38、 vue组件间通信
+
+39、 Vue3 proxy的好坏
+
+40、性能优化
+
+41、react和vue更新机制的区别
+  React 和 Vue 有许多相似之处：
+    (1)都使用了虚拟dom
+    (2)有自己核心库，其他功能都使用状态管理和路由管理的库
+    (3)提供响应式和组件化的视图组件
+  区别：
+    Vue 的路由库和状态管理库都是由官方维护支持且与核心库同步更新的。React 则是选择把这些问题交给社区维护，因此创建了一个更分散的生态系统。但相对的，React 的生态系统相比 Vue 更加繁荣。react的生态系统优于react
+   在 React 应用中，当某个组件的状态发生变化时，它会以该组件为根，重新渲染整个组件子树。
+   在 Vue 应用中，组件的依赖是在渲染过程中自动追踪的，所以系统能精确知晓哪个组件确实需要被重渲染。
+
+
+
+42、symbol应用
+
+
+43、深拷贝
+
+44、 项目
+
+45、Promise实现原理
+在new Promise时候传入了一个函数,这个函数在规范中的叫法是exector 执行器
+// 这里我们创建了一个构造函数 参数就是执行器
+function Promise(exector) {
+    // 这里我们将value 成功时候的值 reason失败时候的值放入属性中
+    let self = this;
+    // 这里我们加入一个状态标识
+    this.status = 'pending';
+
+    this.value = undefined;
+    this.reason = undefined;
+    
+    // 成功执行
+    function resolve(value) {
+      // 判断是否处于pending状态
+        if (self.status === 'pending') {
+            self.value = value;
+            // 这里我们执行之后需要更改状态
+            self.status = 'resolved';
+            // 成功之后遍历then中成功的所有回调函数
+            self.onResolvedCallbacks.forEach(fn => fn());
+        }
+    }
+    
+    // 失败执行
+    function reject(reason) {
+      // 判断是否处于pending状态
+      if (self.status === 'pending') {
+          self.reason = reason;
+          // 这里我们执行之后需要更改状态
+          self.status = 'rejected';
+          // 失败之后遍历then中失败的所有回调函数
+            self.onRejectedCallbacks.forEach(fn => fn());
+      }
+    }
+    
+    exector(resolve, reject);
+}
+
+// 我们将then方法添加到构造函数的原型上 参数分别为成功和失败的回调
+
+Promise.prototype.then = function(onFulfilled, onRejected) {
+    // 获取下this
+    let self = this;
+    if (this.status === 'resolved') {
+        onFulfilled(self.value);
+    }
+    
+    if (this.status === 'rejected') {
+        onRejected(self.reason);
+    }
+    // 如果异步执行则位pending状态
+    if(this.status === 'pending') {
+        // 保存回调函数
+        this.onResolvedCallbacks.push(() => {
+            onFulfilled(self.value);
+        })
+
+        this.onRejectedCallbacks.push(() => {
+            onRejected(self.reason)
+        });
+    }
+}
+}
+
+46、vue组件间通信
+
+47、性能优化
+
+48、vuex数据流动过程
+      vuex是vue的状态管理模式，它采用集中式存储管理所有组件的状态。
+      状态管理模式： state 数据源 action 用户行为导致的状态变化  view 将state应用到视图
+      单向数据流的理念： state -> view -> action -> state
+
+      vuex（大型应用使用）
+      核心是store
+      1、Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。
+      2、你不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地提交 (commit) mutation。这样使得我们可以方便地跟踪每一个状态的变化
+      Vuex 通过 store 选项，提供了一种机制将状态从根组件“注入”到每一个子组件中
+
+      const store = new Vuex.store({
+        state: {
+          count: 0
+        },
+        mutations: {
+          setCount(state) {
+            state.count++
+          }
+        },
+        actions: {
+          actionCount(context){
+            context.commit('setCount')
+          }
+        }
+      })
+      this.$store.dispatch('actionCount')
+      Vuex 允许我们将 store 分割成模块（module）。每个模块拥有自己的 state、mutation、action、getter、甚至是嵌套子模块——从上至下进行同样方式的分割
+
+49、谈谈css预处理器机制
+      1、最主流的CSS预处理器是LESS、SASS和Stylus
+        选择符嵌套，变量，函数
+        计算
+        .wrapper
+          $max-lines = 3
+          $line-height = 1.5
+
+          overflow-y: hidden
+          line-height: $line-height
+          max-height: unit($line-height * $max-lines, 'em')
+
+50、算法：Promise串行
+
+51、Vue 无法检测 property 的添加或移除。由于 Vue 会在初始化实例时对 property 执行 getter/setter 转化，所以 property 必须在 data 对象上存在才能让 Vue 将它转换为响应式的
+  对于已经创建的实例，Vue 不允许动态添加根级别的响应式 property。但是，可以使用 Vue.set(object, propertyName, value) 方法向嵌套对象添加响应式 property。
+
+52、Vue 不能检测以下数组的变动
+    1、当你利用索引直接设置一个数组项时，例如：vm.items[indexOfItem] = newValue
+    2、直接改变一个数组的长度
+    解决办法：
+      1、Vue.set(vm.items, indexOfItem, newValue)
+      2、vm.items.splice(newLength)
+53、由于 Vue 不允许动态添加根级响应式 property，所以你必须在初始化实例前声明所有根级响应式 property，哪怕只是一个空值：
+
+54、Vue 在更新 DOM 时是异步执行的。只要侦听到数据变化，Vue 将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。如果同一个 watcher 被多次触发，只会被推入到队列中一次。
+
+55、为了在数据变化之后等待 Vue 完成更新 DOM，可以在数据变化之后立即使用 Vue.nextTick(callback)。这样回调函数将在 DOM 更新完成后被调用
+    因为 $nextTick() 返回一个 Promise 对象，所以你可以使用新的 ES2017 async/await 语法完成相同的事情：
+
+56、
+
+
+
+
+
+

@@ -1,0 +1,16 @@
+1、对React Hooks的理解
+  在React中我们一般有两种方式来创建组件，类定义或者函数定义；
+  在类定义中我们可以使用许多React的特性，比如state或者各种生命周期钩子，
+  但是在函数定义中却无法使用。所以在React 16.8版本中新推出了React Hooks的功能，通过React Hooks我们就可以在函数定义中来使用类定义当中才能使用的特性。
+  当然React Hooks的出现本身也是为了组件复用，以及相比于类定义当中的生命周期钩子，
+  React Hooks中提供的useEffect将多个生命周期钩子进行结合，使得原先在类定义中分散的逻辑变得更加集中，方便维护和管理。
+
+2、React Hooks当中的useEffect是如何区分生命周期钩子的
+  useEffect可以看成是componentDidMount，componentDidUpdate和componentWillUnmount三者的结合。
+  useEffect(callback, [source])接收两个参数 
+  (1) [source]参数不传时，则每次都会优先调用上次保存的函数中返回的那个函数，然后再调用外部那个函数；
+  (2) [source]参数传[]时，则外部的函数只会在初始化时调用一次，返回的那个函数也只会最终在组件卸载时调用一次；
+  (3) [source]参数有值时，则只会监听到数组中的值发生变化后才优先调用返回的那个函数，再调用外部的函数
+
+3、高阶组件(Higher Order Componennt)本身其实不是组件，而是一个函数，这个函数接收一个元组件作为参数，然后返回一个新的增强组件，高阶组件的出现本身也是为了逻辑复用
+

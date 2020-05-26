@@ -1,0 +1,122 @@
+1、同源策略
+  同源策略是一个约定，该约定阻止当前脚本获取或操作另一域的内容。同源是指：域名、协议、端口号都相同。
+  主要限制是：
+    来自不同源的文档，脚本对当前源的文档的读取或设置某些属性
+2、jsonp
+　JSONP 的原理是通过 script 标签的 src 属性可以跨域的特点，发送请求到外域服务器，外域服务器返回 js 代码，客户端接受响应，然后就执行了这段 js 代码。
+  具体过程是：
+    动态创建 script 标签，并添加到 html 中。
+    定义回调函数。
+    客户端传递一个 callback 参数(值为回调函数的函数名)给服务器，然后服务器端返回数据时，会将这个 callback 参数作为函数名将 json 数据包裹住，一起发给客户端。
+    然后客户端就执行了这段 js 代码。
+3、修改源
+  页面可以改变本身的源，但是会有一些限制。脚本可以将 document.domain设置为当前域或者当前域的超级域，该较短的域会用于后续源检查。
+    如果存在端口号不一致，想通过document.domain设置的方式来通过同源检查的话需要双方都进行设置。
+    因为设置document.domain会导致端口号被重写为null。
+    如果jjp.com:8080想要与jjp.com通信，把jjp.com:8080页面的document.domain设置为jjp.com时端口号会被重写为null，而原来的jjp.com的端口号为80，则还是不能够通过同源检测，需要双方同时设置document.domain让双方端口号都为null。
+
+4、不同源之间的交互
+  * 跨域写：通常允许，比如链接、重定向和表单提交(因为表单提交不需要反馈数据)
+  * 跨域资源嵌入：通常允许，下面会给出跨域资源嵌入的例子
+  * 跨域读：通常不允许，比如在使用XMLHttpRequest的时候会发生跨域问题，不过通过某些方法仍可以进行跨域读
+
+  跨域资源嵌入的例子
+
+    <script src="..."></script>标签嵌入外域的脚本，且该脚本的错误不能在本源中捕获
+    <link rel= "stylesheet" href="...">标签嵌入外域的css文件，由于CSS的松散的语法规则，CSS的跨域需要一个设置正确的Content-Type 消息头，不同浏览器有不同的限制。
+    <img>嵌入外域的图片
+    <video>和<audio>标签嵌入外域的多媒体资源
+    <object>和<embed>的插件
+    @font-face引入的字体，一些浏览器允许引入外域字体，一些浏览器则不允许
+    <iframe> 载入的任何资源，站点可以使用X-Frame-Options消息头来阻止这种形式的跨域交互
+
+5、实现跨域读取的方案
+  * .XMLHttpRequest的跨域
+    （1）JSONP：
+      只能用于get请求，在网页中创建一个script的标签，src为请求的url
+      请求的查询字符串有一个callback的参数，用来指定回调函数的名称，回调函数在js脚本中声明好。
+      当服务器收到请求后，返回一句js脚本，内容是将json数据作为参数传入回调函数并调用该函数。
+  * CORS
+    CORS是跨域资源分享的缩写，能够彻底解决Ajax的跨域问题，同时允许任意类型的请求，需要服务器响应头中增加下面一种或几种
+
+      //*表示允许任意源的访问，也可以指定特定的源
+      1.Access-Control-Allow-Origin：*   
+      //表示跨域访问时带上cookie，需同时在ajax请求中设置`withCredentials: true`，
+      2.Access-Control-Allow-Credentials: true
+      //预检请求后响应的必须字段，返回所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次"预检"请求
+      3.Access-Control-Allow-Methods: GET, POST, PUT
+      //预检请求后响应的必须字段，放入预检请求时请求所带的头
+      4.Access-Control-Allow-Headers：Content-Type
+      //允许浏览器在指定时间内，无需再发送预检请求进行协商，直接用本次协商结果即可
+      5.Access-Control-Max-Age: 1728000
+
+    CORS请求分为简单请求(HEAD、GET、POST)和非简单请求(PUT或DELETE或Content-Type为application)
+    非简单请求会向发一个预检请求(preflight)，请求类型为OPTION，收到预检请求的响应后再发送真正的请求，这个时候的请求与简单请求无异
+
+    简单地说下CORS请求会携带的头信息：
+      //必要请求头，表示当前源，相应的预检响应需要返回Access-Control-Allow-Origin
+      1.Origin
+      //预检时会带上的头，表示真正请求的方法，相应的预检响应需要返回Access-Control-Allow-Method
+      2.Access-Control-Request-Method
+      //预检时会带上的头，表示真正请求会额外发送的头信息，相应的预检响应需要返回Access-Control-Allow-Headers
+      3.Access-Control-Request-Headers
+
+  * WebSocket
+    WebSocket是一种新的通信协议，能够在一个持久连接上提供全双工、双向通信。使用url模式也略有不同。未加密连接使用ws://，加密连接使用wss://
+    最重要的一点是该协议不实行同源策略。服务器需要自己确定请求源是否在白名单内，从而过滤恶意的请求。
+  
+  * 代理
+    1.正向代理：需要借助同源的代理服务器，浏览器先将请求发送给代理服务器，代理服务器接收请求并其转发给目标数据服务器，
+              由于不同源的两个服务器的交互不遵循同源策略，所以代理服务器可以接收到目标数据服务器的响应数据，再将响应数据发送回浏览器
+    2.反向代理: 通常可以用Nginx反向代理来实现，也是利用了服务端之间的资源交互不会有跨域限制的原理。
+
+6、Cookie的跨域
+    同源的页面才可以共享cookie，但是如果两个源的一级域名相同，二级域名不同，浏览器可以通过设置document.domain来共享cookie，比如有
+
+    domainA:http://gg.jjp.com/index.html
+    domainB:http://bb.jjp.com/index.html
+    
+    现在想让domainA和domainB能互相访问对方的cookie，可以双方都设置document.domain为jjp.com，domainA则能够访问到domainB设置的cookie，domainB也能访问到domainA设置的cookie.
+
+7、跨窗口的跨域通信
+  iframe窗口和window.open打开的窗口若与父窗口不是同源的，都无法与创建它们的父窗口通信，无法互相访问对方的document对象。
+  如果两个窗口一级域名相同，二级域名不同，可以通过设置document.domain解决。
+
+  但是对于完全不同源的窗口，想要进行通信，可以通过下面的方法：
+      1、片段识别
+        地址栏中url的#后面的内容变化是不会引起页面的刷新的，这部分内容就是片段识别符，当片段识别符内容变化时，会触发hashchange事件。
+        因此发信息的窗口可以把信息写入接收信息窗口的片段标识符中，接收信息窗口监听hashchange事件来取得自己的片段标识符，从而来达成通信的目的。
+      2、window.name
+        步骤：
+          1.窗口A在页面中动态添加一个iframe，将其src置为窗口B页面地址
+          2.iframe加载了窗口B的页面，窗口B将要发送的消息写入window.name中
+          3.由于窗口A与iframe处于不同域，因为同源策略，窗口A不能访问iframe的window.name
+          4.此时再让iframe加载一个与窗口A同源的页面，使窗口A与iframe属于同域
+          5.窗口A读取iframe的window.name，至此接收到窗口B发送的消息，完成通信
+      3、window.postMessage
+        window.postMessage是HTML5引入的一个新的api，允许两个窗口通信，不论是否两个窗口是否同源
+
+          //发送信息的窗口：http://jjp.com
+          var sonWin = window.open('https://www.baidu.com','百度');
+
+          //参数：要发送的信息、接受信息的窗口的源
+          sonWin.postMessage('你好，百度', 'https://www.baidu.com');
+
+          //接收信息的窗口：https://www.baidu.com
+          //监听postMessage事件
+
+          window.addEventListener('message', function(event) {
+            //event.source：发送消息的窗口
+            //event.origin: 发送消息的网址
+            //event.data: 消息内容
+            if(event.origin === 'http://jjp.com') {
+              event.source.postMessage('Got it', event.origin);
+              console.log(event.data)
+            }
+          });
+
+8、CORS 具体写在那个位置，怎么实现
+  
+
+
+

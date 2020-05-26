@@ -1,0 +1,13 @@
+1、HTML5 history新特性pushState、replaceState
+  * 前进： window.history.forward()
+  * 后退： window.history.back()
+  * 移动到历史记录中特定的位置 
+    向后移动一页：window.history.go(-1);
+    向前移动一页：window.history.go(1);
+  *  var numberOfEntries = window.history.length;  通过检查浏览器历史记录的length属性来找到历史记录堆栈中的页面总数。
+
+
+  * HTML5引入了histtory.pushState()和history.replaceState()这两个方法，他们允许添加和修改history实体
+    使用history.pushState()方法来修改referrer,这种方法可以被用在经过修改状态后而为xmlhttpRequest对象创建的http header中。
+    这个referrer会是创建XMLHttpRequest 时document的URL。
+

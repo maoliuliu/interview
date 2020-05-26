@@ -1,0 +1,15 @@
+1、手动封装一个请求函数，可以设置最大请求次数，请求成功则不再请求，请求失败则继续请求直到超过最大次数
+  <script>
+    // 参数 请求的url, 请求的参数，最大的请求次数，失败的回调， 成功的回调
+    function requestMax (url, param, maxNum, successCallback, errorCallback) {
+      fetch(url, param).then(result => {
+        return successCallback()
+      }).catch(error => {
+        if (maxNum <= 0) {
+          return errorCallback()
+        } else {
+          return requestMax (url, param, maxNum--, successCallback, errorCallback)
+        }
+      })
+    }
+  </script>

@@ -1,0 +1,156 @@
+1、为什么选择 TypeScript
+  * JavaScript 是一门动态弱类型脚本语言，一个数组类型的变量赋值一个数字会变成Number类型的变量
+  * 一个function 里的传参不固定
+
+2、typescript的优势
+  * 更好的可维护性和可读性
+  * 引入了静态类型声明，不需要太多的注释和文档，大部分的函数看类型定义就知道
+  * 在编译阶段就能发现大部分因为变量类型导致的错误
+
+3、难点
+  * 引用三方类库：第三方库如果不是 TypeScript 写的，没有提供声明文件，就需要去为第三方库编写声明文件
+  * 类型定义：对于每一个变量都需要定义它的类型，特别是对于一个对象而言，可能需要定义多层类型
+  * 新概念：TypeScript 中引入的类型(Types)、类(Classes)、泛型(Generics)、接口(Interfaces)以及枚举(Enums)
+
+4、类型推论
+  声明变量的时候，如果对变量进行赋值，如果该变量没有明确地指定类型，TypeScript 会推测出一个类型。
+
+5、tuple 元组
+  一种特殊的情况，如果我们需要定义一个已知元素和类型的数组，但是各个元素的类型不相同，可以使用 tuple 元组
+  const me: [number, string, boolean] = [1, 'ppp', false]
+  数组 push 一个新元素时，会提示 (string | number | boolean)，这是表示元组额外增加的元素可以是之前定义的类型中的任意一种类型。(strin | number | boolean) 称作联合类型
+
+
+6、eunm 枚举
+  enum Animal {
+    Cat,
+    Dog,
+    Mouse,
+  }
+  const cat: Animal = Animal.Cat; // 0
+  const dog: Animal = Animal. Dog; // 1
+
+7、interface
+  * 定义一个接口
+    普通属性， 可选属性（isOnline?: string | number;可选属性如果没有赋值，那么获取到的值是undefined；对于可选方法，必须先进行判断，再调用，否则会报错；）
+    只读属性（readonly page: number;）
+  * 定义一个函数类型接口
+    定义了一个函数接口，使用函数表达式来定义这种形状的函数 type Func = (x: number, y: number, desc?: string) =>void;
+  * 接口的继承（一个 interface 可以同时继承多个 interface ，实现多个接口成员的合并。用逗号隔开要继承的接口。）
+  interface Shape {     //定义接口Shape
+      color: string;
+  }
+  interface PenStroke {
+    penWidth: number;
+  }
+
+  interface Square extends Shape, PenStroke {
+      sideLength: number;
+  }
+
+8、interface和type的区别
+  type
+  * type 可以声明基本类型别名，联合类型，元组等类型
+  * type 语句中还可以使用 typeof 获取实例的 类型进行赋值
+  * 要扩展已有 type 需要创建新 type，不可以重名
+
+  interface
+    interface 可以而 type 不行
+    自身只能表示 object/class/function 的类型
+
+9、extends 关键字
+    type A = {
+      a: number
+    }
+
+    interface AB extends A {
+      b: string
+    }
+    // 与上一种等价
+    type TAB = A & {
+      b: string
+    }
+10、泛型
+  在定义一个函数、type、interface、class 时，在名称后面加上<> 表示即接受类型参数。而在实际调用时，不一定需要手动传入类型参数，TS 往往能自行推断出来。在 TS 推断不准时，再手动传入参数来纠正。
+  type Partial<T> = { [P in keyof T]?: T[P] }
+11、keyof
+  keyof 与 Object.keys 略有相似，只不过 keyof 取 interface 的键
+  
+  interface Point {
+    x: number;
+    y: number;
+  }
+
+  // type keys = "x" | "y"
+  type keys = keyof Point
+
+  <script lang="ts">
+    const data = {
+      a: 3,
+      hello: 'world'
+    }
+    function get<T extends Object, K extends keyof T>(o: T, name: K): T[K] {
+      return o[name]
+    }
+  </script>
+
+12、vue-property-decorator
+  单页面组件中，在 @Component({}) 里面写 props、data 等调用起来极其不方便，而 vue-property-decorator 里面包含了 8 个装饰符则解决了此类问题，他们分别为
+
+  @Emit		   指定事件 emit，可以使用此修饰符，也可以直接使用 this.$emit()
+  @Inject          指定依赖注入）
+  @Mixins          mixin 注入
+  @Model            指定 model
+  @Prop              指定 Prop
+  @Provide        指定 Provide
+  @Watch            指定 Watch
+  @Component    export from vue-class-component
+  <script>
+    import {
+      Component, Prop, Watch, Vue
+    } from 'vue-property-decorator'
+
+    @Component
+    export class MyComponent extends Vue {
+      dataA: string = 'test'
+        
+      @Prop({ default: 0 })
+      propA: number
+
+      // watcher
+      @Watch('child')
+      onChildChanged (val: string, oldVal: string) {}
+      @Watch('person', { immediate: true, deep: true })
+      onPersonChanged (val: Person, oldVal: Person) {}
+
+      // 其他修饰符详情见上面的 github 地址，这里就不一一做说明了
+    }
+
+  </script>
+
+13、第三方库  d.ts 文件
+    * 有一个全局变量，那对应的d.ts文件里面这样写。
+      declare var aaa:number
+      decalre function getName(id:number|string):string
+
+    关键字declare表示声明的意思。在d.ts文件里面，在最外层声明变量或者函数或者类要在前面加上这个关键字。
+    在typescript的规则里面，如果一个.ts、.d.ts文件如果没有用到import或者export语法的话，那么最顶层声明的变量就是全局变量。
+    * 
+    <script>
+      declare module sample {
+
+        // 导出函数 setABC
+        export function setABC(abcValue: number): void;
+
+        // 导出函数 getABC
+        export function getABC(): number;
+
+        // 导出变量 defaultABC
+        export let defaultABC: number;
+        }
+
+    </script>
+
+问：TypeScript 有什么不同的地方？如果有一个项目需要选型，请问你是如何考虑需要使用 TypeScript 的？
+  1、静态类型语言和动态类型语言得核心区别在于，静态类型语言（statically-typed languages）会在编译时（compile time）进行类型检查，而动态语言（dynamically-typed）则是在运行时进行类型检查（runtime）
+  2、

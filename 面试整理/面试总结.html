@@ -1,0 +1,37 @@
+
+1、原型链和作用域链说不太清，主要表现在寄生组合继承和extends继承的区别和new做了什么。
+2、推荐我的两篇文章：若川：面试官问：能否模拟实现JS的new操作符、若川：面试官问：JS的继承 
+3、数组构造函数上有哪些方法（Array.isArray、Array.from、Array.of），数组实例有哪些方法，如何准确的判断数组等都不知道。
+  数组、字符串、对象等API需要熟记于心。推荐我之前的一篇回答
+  若川：一年内的前端看不懂前端框架源码怎么办？
+4、vue生命周期（包含子孙组件的情况）
+5、vue一些高级特性（比如自定义v-model、插槽、mixin、keep-alive、动态组件、异步组件，$nextTick）没有用过，关键简历上写的精通vue 。
+6、vue-cli 2和vue-cli3（4）分不清。
+7、不知道用什么loader解析的vue单文件组件。
+8、候选人线上项目有sourcemap，可以直接看到代码，但不知道如何配置关掉。
+9、不知道是用的什么webpack插件生成的html页面。 
+10、关于vue-cli 推荐两篇文章若川：分析vue-cli@2.9.3 搭建的webpack项目工程、vue-cli 源码分析 (vue-cli3)11、vuex、vue-router大概原理说不清。
+12、axios怎么使用拦截器，是不是知道支持node和浏览器端发送请求，用的什么发送的请求等等。
+13、推荐我的两篇文章若川：学习 vuex 源码整体架构，打造属于自己的状态管理库、若川：学习 axios 源码整体架构，打造属于自己的请求库
+14、使用了很多UI组件库，但对如何发布到npm不知道、也没有了解button等简单组件的实现。
+15、用koa写了一些项目，但对koa中间件如何实现的，不了解，这些源码较少的库，其实可以深入学习下，收益很大。
+  若川：学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理
+
+
+16、
+inner = 'window'
+
+function say() {
+  console.log(inner)
+  console.log(this.inner)
+}
+
+var obj = {
+  inner:  '1-1',
+  say: (() => {
+    console.log(inner)
+    console.log(this.inner)
+  })()
+}
+say()
+obj.say()

@@ -1,0 +1,85 @@
+1、介绍一下了解的设计模式以及应用场景
+  * 单例模式
+    保证一个类只有一个实例，并提供一个访问它的全局访问点（调用一个类，任何时候返回的都是同一个实例）。
+    实现方法：使用一个变量来标志当前是否已经为某个类创建过对象，如果创建了，则在下一次获取该类的实例时，直接返回之前创建的对象，否则就创建一个对象。
+
+  * 观察者模式
+    观察者只要订阅了被观察者的事件，那么当被观察者的状态改变时，被观察者会主动去通知观察者，而无需关心观察者得到事件后要去做什么，实际程序中可能是执行订阅者的回调函数。
+
+  * 中介者模式
+    Bus即为中介者对象，乘客为通信者，乘客具有一些统一的方法API，Bus只管开车停车发广播，执行自己的事物，乘客在不断地接受广播，根据广播信息的类型和内容作出自己的判断，执行事务。
+  * 代理模式
+    为对象提供一种代理以控制对这个对象的访问。
+      ES6中Proxy对象可以理解为：
+        在目标对象之前架设一层“拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写。
+        Proxy 这个词的原意是代理，用在这里表示由它来“代理”某些操作，可以译为"代理器"。
+      <script>
+        function createWebService(baseUrl) {
+          return new Proxy({}, {
+            get(target, propKey, receiver) {
+              return () => httpGet(baseUrl+'/' + propKey)
+            }
+          })
+        }
+
+        const serviceA = createWebService('http://example.com/data-a')
+        const serviceB = createWebService('http://example.com/data-b')
+        const serviceC = createWebService('http://example.com/data-c')
+
+        serviceA.employees().then(json => {
+          const employees = JSON.parse(json)
+          // ···
+        })
+
+      </script>
+  * 装饰者模式
+    能够在不改变对象自身的基础上，在程序运行期间给对像动态的添加职责（方法或属性）。与继承相比，装饰者是一种更轻便灵活的做法。
+
+    可以动态的给某个对象添加额外的职责，而不会影响从这个类中派生的其它对象。
+
+    <script>
+      // 同事A的任务
+      window.onload = () => {
+          console.log('window loaded!')
+      }
+
+      // 装饰者
+      let _onload= window.onload || function () {}
+      window.onload = () => {
+          _onload()
+          console.log('自己的处理函数')
+      };
+
+    </script>
+
+  * 工厂模式
+    假如我们想在网页面里插入一些元素，而这些元素类型不固定，可能是图片、链接、文本，根据工厂模式的定义，在工厂模式下，工厂函数只需接受我们要创建的元素的类型，其他的工厂函数帮我们处理。
+
+
+    总结：装饰器允许你在类和方法定义的时候去注释或者修改它。装饰器是一个作用于函数的表达式，它接收三个参数target、name和descriptor，然后可选性的返回被装饰之后的descriptor对象。
+装饰者模式和代理模式的区别： 
+
+    代理模式的目的是，当直接访问本体不方便或者不符合需要时，为这个本体提供一个代替者。本体定义了关键功能，而代理提供了或者拒绝对他的访问，或者是在访问本体之前做一些额外的事情。 
+装饰者模式的作用就是为对象动态的加入某些行为。
+
+<script>
+  class Cat {
+    say() {
+        console.log("meow ~")
+    }
+  }
+
+  // 实际上当我们给一个类添加一个属性的时候，会调用到 Object.defineProperty 这个方法，
+  // 它会接受三个参数：target 、name 和 descriptor ，上面的Class本质等同于：
+  function Cat() {}
+  Object.defineProperty(Cat.prototype, 'say', {
+    value: function() { console.log("meow ~"); },
+    enumerable: false,
+    configurable: true,
+    writable: true
+  })
+</script>
+
+
+
+2、vue和React中有应用什么设计模式

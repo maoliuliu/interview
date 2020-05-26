@@ -1,0 +1,122 @@
+1、node.js回调函数
+  异步编程基于是基于回调函数的。
+  例如，我们可以一边读取文件，一边执行其他命令，在文件读取完成后，我们将文件内容作为回调函数的参数返回
+  这样在执行代码时就没有阻塞或等待文件 I/O 操作。这就大大提高了 Node.js 的性能，可以处理大量的并发请求
+2、node.js的事件循环
+  node.js是单进程单线程的应用程序。但是因为v8引擎提供的异步执行回调接口，这些接口处理大量并发。几乎每个api都是支持回调函数的。事件机制都是用设计模式中观察者模式实现。
+  事件驱动程序
+3、Node.js中的process.nextTick
+  process.nextTick 方法允许你把一个回调放在下一次时间轮询队列的头上，这意味着可以用来延迟执行，结果是比 setTimeout 更有效率。
+  <script>
+    const EventEmitter = require('events').EventEmitter;
+
+    function complexOperations() {
+      const events = new EventEmitter();
+
+      process.nextTick(function () {
+        events.emit('success');
+      });
+
+      return events;
+    }
+
+    complexOperations().on('success', function () {
+      console.log('success!');
+    });
+  </script>
+4、console
+  %s  string console.log('%s', 'value')
+  %d  number console.log('%d', 3.14)
+  %j  json console.log('%j', {name: 'Chenng'})
+
+5、process
+  进程 Process是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础，进程是线程的容器
+  
+  path
+    查看console.log(process.env.PATH.split(':').join('\n'))
+    设置process.env.PATH = ':/name'
+  // 获取平台信息
+  process.arch // x64
+  process.platform // darwin
+  
+  // 获取内存使用情况
+  process.memoryUsage();
+  
+  // 获取命令行参数
+  process.argv
+
+6、浏览器和Node中Event Loop其实是不相同的
+
+
+7、进程和线程
+  * 进程是 CPU 资源分配的最小单位；线程是 CPU 调度的最小单位。
+  * 一个进程由一个或多个线程组成，线程是一个进程中代码的不同执行路线
+  * 一个进程的内存空间是共享的，每个线程都可用这些共享内存。
+
+  浏览器常用线程：
+    GUI渲染线程，javscript引擎线程，定时器触发线程，事件触发线程，异步http请求线程 <!--(web server缓存线程)--> 
+    1. GUI 渲染线程
+    主要负责页面的渲染，解析 HTML、CSS，构建 DOM 树，布局和绘制等。
+    当界面需要重绘或者由于某种操作引发回流时，将执行该线程。
+    该线程与 JS 引擎线程互斥，当执行 JS 引擎线程时，GUI 渲染会被挂起，当任务队列空闲时，JS 引擎才会去执行 GUI 渲染。
+    2. JS 引擎线程
+    该线程当然是主要负责处理 JavaScript 脚本，执行代码。
+    也是主要负责执行准备好待执行的事件，即定时器计数结束，或者异步请求成功并正确返回时，将依次进入任务队列，等待 JS 引擎线程的执行。
+    当然，该线程与 GUI 渲染线程互斥，当 JS 引擎线程执行 JavaScript 脚本时间过长，将导致页面渲染的阻塞。
+    3. 定时器触发线程
+    负责执行异步定时器一类的函数的线程，如： setTimeout，setInterval。
+    主线程依次执行代码时，遇到定时器，会将定时器交给该线程处理，当计数完毕后，事件触发线程会将计数完毕后的事件加入到任务队列的尾部，等待 JS 引擎线程执行。
+    4. 事件触发线程
+    主要负责将准备好的事件交给 JS 引擎线程执行。
+    比如 setTimeout 定时器计数结束， ajax 等异步请求成功并触发回调函数，或者用户触发点击事件时，该线程会将整装待发的事件依次加入到任务队列的队尾，等待 JS 引擎线程的执行。
+
+    5. 异步 http 请求线程
+    负责执行异步请求一类的函数的线程，如： Promise，axios，ajax 等。
+    主线程依次执行代码时，遇到异步请求，会将函数交给该线程处理，当监听到状态码变更，如果有回调函数，事件触发线程会将回调函数加入到任务队列的尾部，等待 JS 引擎线程执行。
+
+8、Node.js 的运行机制如下:
+
+  V8 引擎解析 JavaScript 脚本。
+  解析后的代码，调用 Node API。
+  libuv 库负责 Node API 的执行。它将不同的任务分配给不同的线程，形成一个 Event Loop（事件循环），以异步的方式将任务的执行结果返回给 V8 引擎。
+  V8 引擎再将结果返回给用户。
+
+9、node event Loop
+  外部输入数据 –> 
+  轮询阶段(poll) –> 
+  检查阶段(check) –> 
+  关闭事件回调阶段(close callback) –> 
+  定时器检测阶段(timer) –>   <!--执行setTimeout, setInterval的灰度-->
+  I/O 事件回调阶段(I/O callbacks) –> 
+  闲置阶段(idle, prepare) –> 
+  轮询阶段
+  (按照该顺序反复运行）
+
+10、Node 与浏览器的 Event Loop 差异
+  浏览器环境下，microtask 的任务队列是每个 macrotask 执行完之后执行。
+  而在 Node.js 中，microtask 会在事件循环的各个阶段之间执行，也就是一个阶段执行完毕，就会去执行 microtask 队列的任务。
+
+  <script>
+    setTimeout(()=>{
+      console.log('timer1')
+      Promise.resolve().then(function() {
+          console.log('promise1')
+      })
+    }, 0)
+    setTimeout(()=>{
+        console.log('timer2')
+        Promise.resolve().then(function() {
+            console.log('promise2')
+        })
+    }, 0)
+
+    // 浏览器： timer1 -> promise1 -> timer2 -> promise2
+    // node timer1=>timer2=>promise1=>promise2
+
+    // 全局脚本（main()）执行，将 2 个 timer 依次放入 timer 队列，main()执行完毕，调用栈空闲，任务队列开始执行；
+    // 首先进入 timers 阶段，执行 timer1 的回调函数，打印 timer1，并将 promise1.then 回调放入 microtask 队列，同样的步骤执行 timer2，打印 timer2；
+    // 至此，timer 阶段执行结束，event loop 进入下一个阶段之前，执行 microtask 队列的所有任务，依次打印 promise1、promise2
+  </script>
+
+
+  

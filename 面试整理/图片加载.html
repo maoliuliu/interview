@@ -1,0 +1,52 @@
+1、实现一个图片的加载；设置第一张图片加载1s之后加载第二张图片
+  <script>
+    //设置一个函数，把图片的url地址作为参数
+    function createImg(url){
+      //实例化promise对象
+      return new Promise(resolve=>{
+        let img = new Image();//建立图像对象
+        img.src = url;//设置图片的地址
+        document.body.appendChild(img);//把图片节点插入到body中
+        setTimeout(function(){
+            resolve();//图片加载完成后执行resolve 
+        },1000);
+      })
+    }
+    createImg("1.jpg")
+    .then(function(){
+        return createImg("2.jpg")
+    })
+    .then(function(){
+        return createImg("3.jpg")
+    });
+
+  </script>
+
+2、图片懒加载
+  原理
+    将页面中的img标签src指向一张小图片或者src为空，然后定义data-src（这个属性可以自定义命名，我才用data-src）属性指向真实的图片。
+    src指向一张默认的图片，否则当src为空时也会向服务器发送一次请求。可以指向loading的地址。注意，图片要指定宽高。
+    当载入页面时，先把可视区域内的img标签的data-src属性值负给src，然后监听滚动事件，把用户即将看到的图片加载。这样便实现了懒加载。
+
+    <script>
+      let num = document.getElementsByTagName('img').length;
+      let img = document.getElementsByTagName("img");
+      let n = 0; //存储图片加载到的位置，避免每次都从第一张图片开始遍历
+  
+      lazyload(); //页面载入完毕加载可是区域内的图片
+  
+      window.onscroll = lazyload;
+  
+      function lazyload() { //监听页面滚动事件
+        let seeHeight = document.documentElement.clientHeight; //可见区域高度
+        let scrollTop = document.documentElement.scrollTop || document.body.scrollTop; //滚动条距离顶部高度
+        for (let i = n; i < num; i++) {
+          if (img[i].offsetTop < seeHeight + scrollTop) {
+            if (img[i].getAttribute("src") == "Go.png") {
+              img[i].src = img[i].getAttribute("data-src");
+            }
+            n = i + 1;
+          }
+        }
+      }
+    </script>

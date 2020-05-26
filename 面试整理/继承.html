@@ -1,0 +1,115 @@
+1，原型链继承 （有两种实现方式）
+
+  （1）Son.prototype = Father.prototype
+
+    弊端：Son.prototype.constructor 指向Father,需要手动更改为Son ；Son的实例化对象只能继承Father原型中的方法，无法继承Father本身的属性。
+
+  （2）Son.prototype = new Father()
+
+    弊端：Son.prototype.constructor 指向Father,需要手动更改为Son；Son的实例化对象共享Father自身的引用类型属性。什么意思呢？下面举个栗子：
+
+    function Father(){ this.name = "zs" ; this.arr = [1,2,3] }
+
+    function Son(){ }
+
+    Son.prototype = new Father()
+
+    var s1 = new Son(), s2 = new Son();
+
+    s1.arr.push(5);
+
+    console.log(s1.arr)--------> [1,2,3,5]
+
+    console.log(s2.arr)--------->[1,2,3,5]
+
+    看了这里例子就明白了，Son的实例化对象s1,s2继承了Father的属性arr,但是s1,s2是同时指向这一属性的。
+
+2，借助构造函数继承
+
+  function Father(){ this.name = "zs"; this.age=38 };
+
+  function Son(){ Father.call( this) / Father.apply(this) }
+
+  弊端：Son只能继承Father自身的属性，而无法继承Father原型中的方法。
+
+3，组合式继承
+
+  将原型链继承与构造函数结合起来
+
+  function Father(){ this.name="zs";this.age=38 }
+
+  Father.prototype.sayHi = function(){ alert("hello") }
+
+  function Son(){ Father.call(this) }
+
+  Son.prototype = new Father()
+
+  var s = new Son() ;
+
+  弊端：通过Father.call() 和 new Father() ,父类构造函数Father被调用了两次。
+
+4，原型式继承
+
+  function createObj(o){ function F(){ } F.prototype=o ; return new F() }
+
+  var obj = { name:"zs" , age:18, sayHi:function(){ } }
+
+  var newObj = createObj( obj );
+
+  newObj继承了obj的属性和方法，但是同样出现了共享父类中引用类型属性的问题。
+
+5，经典继承（Es5中的新语法：存在兼容性问题，需要做浏览器的能力检测）
+
+  function create(obj){
+
+  if(Object.create){ return Object.create(obj) }
+
+  else { function F(){ } F.prototype=o ; return new F() }
+
+  }
+
+6,寄生式继承（类似于原型式继承）
+
+  function createObj(o){ function F(){ } F.prototype=o ; return new F() }
+
+  function createObj2(o){ var obj = createObj(o) ; obj.sayHi = function(){ } return obj }
+
+  var obj = { name:"zs" , age:18, sayHi:function(){ } }
+
+  var newObj = createObj2(obj)
+
+  newObj继承了obj的属性和方法，但是同样出现了共享父类中引用类型属性的问题。
+
+7,寄生组合式继承（组合继承+寄生继承）
+
+  function createObj(o){ function F(){ } F.prototype=o ; return new F() }
+
+  function inheritPrototype(Child, Father) {
+
+  var prototype = object(Father.prototype);//创建对象
+
+  prototype.constructor = Child;//增强对象
+
+  Child.prototype = prototype;//指定对象 }
+
+  function Father(name) {
+
+  this.name = name;
+
+  this.arr = [1, 2, 3, 4]; }
+
+  Father.prototype.sayName = function () { console.log("父类原型" + this.name); }
+
+  function Child(name, age) { Father.call(this, name); this.age = age; }
+
+  inheritPrototype(Child, Father)
+
+  Child.prototype.sayAge = function () { console.log(this.age); }
+
+  var child1 = new Child() , child2 = new Child();
+
+  child1.arr.push(5) ------> [1,2,3,4,5]
+
+  child2.arr ------> [1,2,3,4].
+
+  优点：可以多重继承 解决两次调用 解决实例共享引用类型的问题 原型链保持不变

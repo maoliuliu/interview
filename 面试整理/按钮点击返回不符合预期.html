@@ -1,0 +1,90 @@
+1、在进行前端开发过程中，经常会遇到需要请求同一个数据接口但不同参数的需求，这种情况下当用户通过页面操作频繁请求该接口，而接口的不同参数响应时间差异较大时，容易引发数据渲染混乱的bug。
+  举例说明：假设页面上有button1,button2两个按钮，点击这两个按钮会请求同一个后台接口，但发送的参数不同，由于参数的不同后台操作数据库的查询语句会有一定差异，这就导致了不同的查询操作耗时可能差异巨大。
+    再假设button1发送的参数响应的时间为2秒，button2发送的参数响应时间为1秒，用户快速先后点击了button1和button2按钮。
+    这时会先后发送两个ajax请求，过了1秒后button2的响应数据先返回渲染到DOM上，又过了1秒后button1的响应数据返回后渲染到DOM覆盖button2的数据。
+    而这时用户页面button2由于是后点击的，处于选中状态，用户期望查看button2对应的数据，但是最后却展示button1按钮的数据，这与用户的期望不符合，是一个严重的bug。
+
+  分析：
+    1、用户快速频繁的操作，导致了多次发送同一接口不同参数的请求
+    2、后台接口由于不同参数的查询操作导致数据响应时间差异大。
+  
+  方案：
+    1、后台接口由于不同参数的查询操作导致数据响应时间差异大。
+    2、使用节流函数
+—
+2、 页面上有一个输入框，两个按钮，A按钮和B按钮，点击A或者B分别会发送一个异步请求，请求完成后，结果会显示在输入框中
+  用户点击了一次A，然后点击一次B，又点击一次A，输入框显示结果的顺序为先显示A异步请求结果，再次显示B的请求结果，最后再次显示A的请求结果。
+
+  分析：
+    点击按钮时，先发放入请求；数组为空说明，还没执行；就先执行；不为空，则加入数组中，等待执行
+    利用迭代器，遍历数组，执行请求
+    封装函数fn，思路来自之前看的Generator的异步请求方式
+    <script>
+      /**
+      * A的请求；pA(promise对象)
+      * B的请求；pA(promise对象)
+      * @click 事件函数 handler
+      */
+      let arr = []
+      let it
+      function* main() {
+          //进来的是pA，pB封装后的方法
+          const data = yield arr.unshift()()
+          if(arr.length > 0) {
+              it = main()
+              it.next()
+          }
+      }
+      it = main()
+      //封装pA,pB的请求
+      function pn(promise) {
+          return promise.then(res => it.next(res))
+      }
+      //当点击按钮发送请求时,将相应的请求加入数组中
+      function handler(pn) {
+          arr.push(pn)
+          //数组不为空说明请求触发中
+          if(arr.length = 0) {
+              it.next()
+          }
+      }
+
+    </script>
+  
+  二、
+    在全局我们定义了一个全局P，P保存了一个promise的实例。
+    户每次点击按钮时，我们在事件中访问全局Promise实例，将异步操作包装到成新的Promise实例，然后通过全局Promise实例的then方法来连接这些行为。
+    连接的时候需要注意，then链的函数中必须将新的promise实例进行返回
+    then链连接完成后，我们需要更新全局的P变量，只有这样，其它点击事件才能得到最新的Promise的执行链。
+    <script>
+      var a = document.querySelector("#a")
+      var b = document.querySelector("#b")
+      var i = document.querySelector("#ipt");
+      //全局变量p保存promie实例
+      var P = Promise.resolve();
+      a.onclick  = function(){
+          //将事件过程包装成一个promise并通过then链连接到
+          //全局的Promise实例上，并更新全局变量，这样其他点击
+          //就可以拿到最新的Promies执行链
+          P = P.then(function(){
+              //then链里面的函数返回一个新的promise实例
+              return new Promise(function(resolve,reject){
+                  setTimeout(function(){
+                      resolve()
+                      i.value = "a";
+                  },1000)
+              })
+          })
+      }
+      b.onclick  = function(){
+          P = P.then(function(){
+              return new Promise(function(resolve,reject){
+                  setTimeout(function(){
+                      resolve()
+                      console.log("b")
+                      i.value = "b"
+                  },2000)
+              })
+          })
+      }
+    </script>
