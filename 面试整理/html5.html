@@ -11,3 +11,20 @@
     使用history.pushState()方法来修改referrer,这种方法可以被用在经过修改状态后而为xmlhttpRequest对象创建的http header中。
     这个referrer会是创建XMLHttpRequest 时document的URL。
 
+    pushState 用于向 history 添加当前页面的记录，而 replaceState 和 pushState 的用法完全一样，唯一的区别就是它用于修改当前页面在 history 中的记录。
+
+    pushState()有三个参数:state对象，标题(现在是被忽略，未作处理)，URL(可选)
+
+
+    例子
+      假设http://mozilla.org/foo.html页面执行了一下JS
+
+      var stateObj = { foo: "bar" }; history.pushState(stateObj, "page 2", "bar.html");
+      这种方法将会使url地址栏显示http://mozilla.org/bar.html，但浏览器不会加载bar.html页面，即使这个页面存在也不会加载。
+
+      现在再次假设用户继续访问http://google.com，然后点击后退。这时，url地址栏将会，http://mozilla.org/bar.html，页面会得到popstate事件（chrome），
+      这个状态对象会包含一个stateObj的copy。这个页面看起来像foo.html。+
+
+      这时，我们再次点击后退，URL将变成http://mozilla.org/foo.html，document将得到另一个popstate事件和为null的state对象。
+      这次的返回动作并没有改变文档的内容。（也许会过一会尝试加载…chrome）
+

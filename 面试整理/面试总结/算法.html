@@ -62,3 +62,32 @@
     }
     return arr
   }
+
+
+
+  7、二分查找
+
+  function BinarySearch(arr, item) {
+    let start = 0, end = arr.length -1;
+    while(start < end) {
+      let mid = Math.floor((start+end)/2)
+      if (arr[mid] > item) {
+        end = mid - 1
+      } else if (arr[mid] < item){
+        start = mid + 1
+      } else if  (arr[mid] === item) {
+        return mid
+      }
+    }
+  }
+
+  function BinarySearch(arr, item, start, end) {
+    let mid = Math.floor((start+end)/2)
+      if (arr[mid] > item) {
+        BinarySearch(arr, item, start, mid -1)
+      } else if (arr[mid] < item){
+        BinarySearch(arr, item, mid + 1, end)
+      } else if  (arr[mid] === item) {
+        return mid
+      }
+  }

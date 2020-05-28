@@ -1,0 +1,112 @@
+1、原理
+  当创建 Vue 实例时,vue 会遍历 data 选项的属性
+  利用 Object.defineProperty 为属性添加 getter 和 setter 对数据的读取进行劫持（getter 用来依赖收集,setter 用来派发更新）
+  并且在内部追踪依赖,在属性被访问和修改时通知变化。
+
+  每个组件实例会有相应的 watcher 实例
+  会在组件渲染的过程中记录依赖的所有数据属性（进行依赖收集,还有 computed watcher,user watcher 实例）
+  之后依赖项被改动时,setter 方法会通知依赖与此 data 的 watcher 实例重新计算（派发更新）,从而使它关联的组件重新渲染。
+
+2、computed 和 watch 有什么区别及运用场景
+  computed 计算属性 : 依赖其它属性值,并且 computed 的值有缓存,只有它依赖的属性值发生改变,下一次获取 computed 的值时才会重新计算 computed 的值。
+  watch 侦听器 : 更多的是「观察」的作用,无缓存性,类似于某些数据的监听回调,每当监听的数据变化时都会执行回调进行后续操作。
+  
+3、Vue 中的 key 到底有什么用
+  key 是给每一个 vnode 的唯一 id,依靠 key,我们的 diff 操作可以更准确、更快速
+  (对于简单列表页渲染来说 diff 节点也更快,但会产生一些隐藏的副作用,比如可能不会产生过渡效果,或者在某些节点有绑定数据（表单）状态，会出现状态错位。
+
+  diff 算法的过程中,先会进行新旧节点的首尾交叉对比,当无法匹配的时候会用新节点的 key 与旧节点进行比对,从而找到相应旧节点.
+
+  更准确 : 因为带 key 就不是就地复用了,在 sameNode 函数 a.key === b.key 对比中可以避免就地复用的情况。所以会更加准确,如果不加 key,会导致之前节点的状态被保留下来,会产生一系列的 bug。
+  更快速 : key 的唯一性可以被 Map 数据结构充分利用,相比于遍历查找的时间复杂度 O(n),Map 的时间复杂度仅仅为 O(1)
+
+4、谈一谈 nextTick 的原理
+  Vue 在更新 DOM 时是异步执行的。只要侦听到数据变化，Vue 将开启一个队列，并缓冲在同一事件循环中发生的所有数据变更。
+  vue 的 nextTick 方法的实现原理:
+    * vue 用异步队列的方式来控制 DOM 更新和 nextTick 
+    * 回调先后执行microtask 因为其高优先级特性，能确保队列中的微任务在一次事件循环前被执行完毕
+    * 考虑兼容问题,vue 做了 microtask 向 macrotask 的降级方案
+
+5、vue 是如何对数组方法进行变异的
+  Vue 通过原型拦截的方式重写了数组的 7 个方法,首先获取到这个数组的ob,也就是它的 Observer 对象,
+  如果有新的值,就调用 observeArray 对新的值进行监听,然后手动调用 notify,通知 render watcher,执行 update
+
+6、谈谈 Vue 事件机制,手写$on,$off,$emit,$once
+  Vue 事件机制 本质上就是 一个 发布-订阅 模式的实现
+  <script>
+class Vue {
+  constructor() {
+    //  事件通道调度中心
+    this._events = Object.create(null);
+  }
+  $on(event, fn) {
+    if (Array.isArray(event)) {
+      event.map(item => {
+        this.$on(item, fn);
+      });
+    } else {
+      (this._events[event] || (this._events[event] = [])).push(fn);
+    }
+    return this;
+  }
+  $once(event, fn) {
+    function on() {
+      this.$off(event, on);
+      fn.apply(this, arguments);
+    }
+    on.fn = fn;
+    this.$on(event, on);
+    return this;
+  }
+  $off(event, fn) {
+    if (!arguments.length) {
+      this._events = Object.create(null);
+      return this;
+    }
+    if (Array.isArray(event)) {
+      event.map(item => {
+        this.$off(item, fn);
+      });
+      return this;
+    }
+    const cbs = this._events[event];
+    if (!cbs) {
+      return this;
+    }
+    if (!fn) {
+      this._events[event] = null;
+      return this;
+    }
+    let cb;
+    let i = cbs.length;
+    while (i--) {
+      cb = cbs[i];
+      if (cb === fn || cb.fn === fn) {
+        cbs.splice(i, 1);
+        break;
+      }
+    }
+    return this;
+  }
+  $emit(event) {
+    let cbs = this._events[event];
+    if (cbs) {
+      const args = [].slice.call(arguments, 1);
+      cbs.map(item => {
+        args ? item.apply(this, args) : item.call(this);
+      });
+    }
+    return this;
+  }
+}
+  </script>
+7、说说 Vue 的渲染过程
+
+8、keep-alive组件
+  获取 keep-alive 包裹着的第一个子组件对象及其组件名根据设定的 include/exclude（如果有）进行条件匹配,决定是否缓存。
+  不匹配,直接返回组件实例根据组件 ID 和 tag 生成缓存 Key,并在缓存对象中查找是否已缓存过该组件实例。
+  如果存在,直接取出缓存值并更新该 key 在 this.keys 中的位置(更新 key 的位置是实现 LRU 置换策略的关键)在 this.cache 对象中存储该组件实例并保存 key 值,之后检查缓存的实例数量是否超过 max 的设置值,超过则根据 LRU 置换策略删除最近最久未使用的实例（即是下标为 0 的那个 key）最后组件实例的 keepAlive 属性设置为 true
+
+9、  https://github.com/erichui/interview-topic
+
+

@@ -7,7 +7,8 @@ https://juejin.im/post/5e6f4b4e6fb9a07cd443d4a5#heading-19
   css-loader
   es6 -> es5  babel-loader
 2、常见的plugin
-  * html-webpack-plugin  作用一是创建HTML页面文件到你的输出目录，作用二是将webpack打包后的chunk自动引入到这个HTML中
+  * html-webpack-plugin 
+    作用一是创建HTML页面文件到你的输出目录，作用二是将webpack打包后的chunk自动引入到这个HTML中
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'src/index.html',
@@ -86,3 +87,11 @@ https://juejin.im/post/5e6f4b4e6fb9a07cd443d4a5#heading-19
 
       module.exports = MyPlugin;
     </script>
+
+7、webpack怎么工作的过程
+  * 解析配置参数，合并从shell(npm install 类似的命令)和webpack.config.js文件的配置信息，输出最终的配置信息；
+  * 注册配置中的插件,让插件监听webpack构建生命周期中的事件节点，做出对应的反应；
+  * 从entry入口文件开始解析文件构建语法树，找到每个文件的依赖文件，传递下去
+  * 在解析文件递归的过程中，根据文件类型和loader配置来找出合适的loader对文件进行转换
+  * 递归完成后得到每个文件的最终结果，根据entry配置生成代码块chunk
+  * 输出所有chunk到文件系统

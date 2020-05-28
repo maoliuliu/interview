@@ -122,4 +122,24 @@
 
     6、冻结 Object.freeze() 会创建一个冻结对象，这个方法实际上会在一个现有对象上调用Object.seal(),并把所有现有属性标记为writable: false,这样就无法修改它们的值。
       它会禁止对于对象本身及其任意直接属性的修改（但是这个对象引用的其他对象是不受影响的,你可以深度冻结一个对象，具体方法为，首先这个对象上调用Object.freeze()然后遍历它引用的所有对象，并在这些对象上调用Object.freeze()。但是一定要小心，因为这么做有可能会无意中冻结其他共享对象。
+
+
+数据双向绑定
+
+  <script>
+  　var obj = {};　　
+    Object.defineProperty(obj,
+    "newProp",
+    {
+      get:function(){
+        return obj;
+      },　　　　
+      set:function(newVal){
+        document.getElementById("inp").value = newVal;
+        document.getElementById("showText").innerHTML = newVal;
+      }})　　
+      document.addEventListener("keyup",function(e){
+        obj.newProp = e.target.value
+      })
+  </script>
     

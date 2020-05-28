@@ -1,0 +1,58 @@
+1、合并两个数组
+  concat, for循环，扩展运算法，push.apply 
+
+2、合并两个对象
+  Object.assign、扩展运算法、手写深浅拷贝
+
+3、interface 和 type 的区别
+  1、type可以定义基本类型
+  2、inteface可以定义两个相同变量并合并，type不可以定义两个相同的变量
+  3、interface 可以使用extends 类似已type的&
+
+4、flex: 0 1 auto 表示什么意思
+  flex: 0 1 auto 其实就是弹性盒子的默认值，表示 flex-grow, flex-shrink 和 flex-basis 的简写，
+  分别表示放大比例、缩小比例、分配多余空间之前占据的主轴空间
+  1.flex-grow属性定义项目的放大比例，默认为0，即如果存在剩余空间，也不放大。
+  2.flex-shrink属性定义了项目的缩小比例，默认为1，即如果空间不足，该项目将缩小。
+  3.flex-basis属性定义了在分配多余空间之前，项目占据的主轴空间（main size）
+
+  https://github.com/Advanced-Frontend/Daily-Interview-Question/issues/380
+
+5、求字符串数组的最长公共前缀
+
+
+6、获取精度更高的时间
+  浏览器使用 performance.now() 可以获取到 performance.timing.navigationStart 到当前时间之间的微秒数
+
+  Node.js 使用 process.hrtime 返回一个数组，其中第一个元素的时间以秒为单位，第二个元素为剩余的纳秒
+
+7、获取首屏时间
+  * H5 如果页面首屏有图片
+    首屏时间 = 首屏图片全部加载完毕的时刻 - performance.timing.navigationStart
+  * H5 如果页面首屏没有图片
+    首屏时间 = performance.timing.domContentLoadedEventStart - performance.timing.navigationStart
+  * 小程序通过拦截 setData 调用方式计算
+
+8、git rebase 和 merge 的区别
+  区别在于是否保留分支的 commit 提交节点，rebase 会给你一个简洁的线性历史树
+9、大型复杂项目开发协作经验、遇到的问题和解决方案
+主要介绍下 git 协作流程
+10、有没有做过 node 端
+  介绍了下我的「高级前端面试」小程序和写过的几个 node 脚本，聊了下整体的架构、数据库（mysql + redis）、部署、监控这些方面？？？
+
+11、如果让你负责一个新项目，如何选择技术栈，如何避免多端合作可能遇到的问题
+  脚手架开发、约定团队开发规范、Lint 等；根据团队的技术栈、成员能力等去选择
+
+12、介绍我开发的性能监控 SDK、行为埋点 SDK 的工作、背景、遇到的问题等
+
+  我的业务问题，介绍了下整体的架构、遇到的一些难点、解决方案等
+13、介绍一些开源框架的原理
+  Koa、Axios、Vue、React、Taro 等
+
+14、小程序的技术架构和方案、小程序的出现主要解决什么问题？
+  包含小程序容器、渲染引擎和 JavaScript 引擎。UI 层运行在 WebView 中，而逻辑层运行在独立的 JS 引擎中。
+
+  降低获客成本、打通跨端
+
+15、怎么发 beta 版本
+  npm publish --tag beta

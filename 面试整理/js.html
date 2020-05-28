@@ -127,3 +127,78 @@
   * 逗号表达式作为一个整体，它的值为最后一个表达式（也即表达式n）的值
   * 逗号运算符的优先级别在所有运算符中最低
 
+26、数据类型检查
+  typeof 基本数据类型undefined, string, boolean, number，object 其中null，function， array都是objct
+  instanceof 通过原型链来判断数据类型的
+  Object.prototype.toString.call()可以检测所有的数据类型
+
+  function getType(obj) {
+    if (obj === null) return String(obj)
+    return typeof obj === 'object' ? Object.prototype.toString.call(obj).replace('[object ', '').replace(']', '') : typeof obj
+  }
+
+27、继承
+  构造函数绑定：使用 call 或 apply 方法，将父对象的构造函数绑定在子对象上
+
+  实例继承：将子对象的 prototype 指向父对象的一个实例
+
+  拷贝继承：如果把父对象的所有属性和方法，拷贝进子对象
+
+  原型继承：将子对象的 prototype 指向父对象的 prototype
+
+  ES6 语法糖 extends继承
+28、new一个对象的过程
+
+  第一步：创建一个实例空对象 {}
+  第二步： this变量引用该对象，同时继承构造函数的原型
+  第三步： 属性和方法被加入到this引用的对象中
+  第四部： 返回这个对象
+29、watcher
+  以对象和handler函数的方式来定义一个监听属性，handler就是处理监听变动时的函数
+  deep属性
+  在组件创建后，或者说watch被声明和绑定的时候，立刻执行一次handler函数，这就需要使用immediate属性了，它默认为false，改为true后，就会立刻执行handler
+
+30、Vue的DOM刷新机制是个异步队列，并不是你想象中的立刻、马上、即时更新！
+  这个异步队列是一轮一轮的执行并刷新 上面带来的问题是，一些依赖DOM更新完毕才能进行的操作（比如对新增加的DOM元素进行事件绑定），无法立刻执行，必须等待一轮队列执行完毕  
+  最容易碰到上面问题的地方：created生命周期钩子函数中对DOM进行操作 
+  解决办法：使用this.nextTick(回调函数)方法，将对DOM的操作作为它的回调函数使用。
+
+31、函数式组件
+  没有管理任何状态，也就是说无状态，没有响应式数据
+  没有监听任何传递给它的状态
+  没有写生命周期方法
+  本质上只是一个接收一些prop的函数
+  没有实例，没有this上下文
+32、监听子组件的生命周期
+  常规：
+    // Parent.vue
+    <Child @mounted="doSth" />
+    
+    //Child.vue
+    mounted(){
+        this.$emit('mounted');
+    }
+  Vue给我们提供了一种更简便的方法，子组件无需做任何处理，只需要在父组件引用子组件时使用@hook事件来监听即可
+  <Child @hook:mounted="doSth" />  
+
+33、数组
+  es5：concat 、join 、push、pop、shift、unshift、slice、splice、substring和substr 、sort、 reverse、indexOf和lastIndexOf 、every、some、filter、map、forEach、reduce
+
+  es6：find、findIndex、fill、copyWithin、Array.from、Array.of、entries、values、key、includes
+34\怎么在vue中点击别的区域输入框不会失去焦点？
+答：阻止事件的默认行为
+
+  具体操作：监听你想点击后不会丢失 input 焦点的那个元素的 mousedown 事件，回调里面调用 event.preventDefault()，会阻止使当前焦点丢失这一默认行为。
+
+35、跟keep-alive有关的生命周期是哪些？描述下这些生命周期
+  activated和deactivated两个生命周期函数
+  1.activated：当组件激活时，钩子触发的顺序是created->mounted->activated
+  2.deactivated: 组件停用时会触发deactivated，当再次前进或者后退的时候只触发activated
+
+
+36、vue如何优化首页的加载速度
+    1、第三方js库按CDN引入（一、cdn引入 二、去掉第三方库引入的import 三、把第三方库的js文件从打包文件里去掉）
+    2、 vue-router路由懒加载
+    3、压缩图片资源
+    
+
